@@ -1,0 +1,30 @@
+{
+   "name": "fennec-utilities",
+   "version": "1.0.0",
+   "description": "utility package for interacting with fennec 💻",
+   "main": "dist/cjs/index.js",
+   "module": "dist/esm/index.js",
+   "types": "types/index.d.ts",
+   "files": [
+      "dist",
+      "src",
+      "types"
+   ],
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/magicalbunny31/fennec-utilities.git"
+   },
+   "author": "magicalbunny31",
+   "license": "MIT",
+   "bugs": {
+      "url": "https://github.com/magicalbunny31/fennec-utilities/issues"
+   },
+   "homepage": "https://github.com/magicalbunny31/fennec-utilities#readme",
+   "dependencies": {
+      "@magicalbunny31/awesome-utility-stuff": "github:magicalbunny31/awesome-utility-stuff",
+      "discord.js": "^14.7.1"
+   },
+   "engines": {
+      "node": ">=16.9.0"
+   }
+}
