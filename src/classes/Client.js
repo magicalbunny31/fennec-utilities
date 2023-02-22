@@ -1,7 +1,6 @@
-import { codeBlock, WebhookClient } from "discord.js";
-import { REST } from "discord.js";
-import os from "os";
-import { number } from "@magicalbunny31/awesome-utility-stuff";
+const { codeBlock, WebhookClient, REST } = require("discord.js");
+const os = require("os");
+const { number } = require("@magicalbunny31/awesome-utility-stuff");
 
 
 module.exports = class Client {
