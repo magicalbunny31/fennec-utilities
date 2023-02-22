@@ -97,7 +97,9 @@ module.exports = class Client {
    async #send(payload) {
       // sends a webhook
       void await this.webhook.send({
-         username: this.name,
+         username: this.name.includes(`discord`) // username cannot contain "discord"
+            ? this.name.split(`-`).slice(1).join(`-`)
+            : this.name,
          avatarURL: this.avatarURL,
 
          content: codeBlock(
