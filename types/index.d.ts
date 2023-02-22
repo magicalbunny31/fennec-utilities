@@ -1,4 +1,4 @@
-import { ClientData, Payload } from "@types/Data"
+import { ClientData, Payload } from "./Data"
 
 
 export class Client {
