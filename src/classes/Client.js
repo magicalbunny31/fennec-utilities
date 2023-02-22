@@ -71,7 +71,7 @@ module.exports = class Client {
          const units = [ `kB`, `MB`, `GB` ];
 
          let unit = -1;
-         const remainder = 10 ** dp;
+         const remainder = 10;
 
          do {
             bytes /= 1000;
