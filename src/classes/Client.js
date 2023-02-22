@@ -78,7 +78,7 @@ module.exports = class Client {
             unit ++;
 
          } while (
-            Math.round(Math.abs(bytes) * remainder) / remainder >= thresh
+            Math.round(Math.abs(bytes) * remainder) / remainder >= 1000
             && unit < units.length - 1
          );
 
