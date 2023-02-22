@@ -68,7 +68,7 @@ module.exports = class Client {
          if (Math.abs(bytes) < 1000)
             return `${bytes} B`;
 
-         const units = [ `kB`, `MB`, `GB` ];
+         const units = [ `KB`, `MB`, `GB` ];
 
          let unit = -1;
          const remainder = 10;
