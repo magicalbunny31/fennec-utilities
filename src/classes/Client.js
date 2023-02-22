@@ -6,7 +6,7 @@ import { number } from "@magicalbunny31/awesome-utility-stuff";
 
 module.exports = class Client {
    // sets the loop
-   #start;
+   #started;
 
    // token for discord rest client
    #token;
@@ -140,7 +140,7 @@ module.exports = class Client {
     */
    async start() {
       // client already started
-      if (this.#start)
+      if (this.#started)
          throw new Error(`@magicalbunny31/fennec-utilities › Client: client already started 🚫`);
 
       // send the payload
@@ -148,12 +148,12 @@ module.exports = class Client {
       await this.#send(payload);
 
       // start the client
-      this.#start = true;
+      this.#started = true;
 
       // loop updates
       const repeat = async () => {
          // stop looping
-         if (!this.#start)
+         if (!this.#started)
             return;
 
          // send an update
@@ -191,6 +191,6 @@ module.exports = class Client {
     * stops the client
     */
    stop() {
-      this.#start = false;
+      this.#started = false;
    };
 };

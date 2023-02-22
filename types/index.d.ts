@@ -2,8 +2,8 @@ import { ClientData, Payload } from "./Data"
 
 
 export class Client {
-   private start: boolean;
-   private token: boolean;
+   private started: boolean;
+   private token:   boolean;
 
    constructor(ClientData: ClientData);
 
