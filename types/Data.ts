@@ -16,7 +16,6 @@ export type ClientData = {
    discordClient: DiscordClient;
    name: string;
    status: Status;
-   startedAt: number;
    webhook: WebhookClientData
 };
 
@@ -26,7 +25,6 @@ export type Payload = {
    id:        string;
    name:      ClientData[`name`];
    status:    ClientData[`status`];
-   startedAt: ClientData[`startedAt`];
 
    guilds:        number;
    cpuPercentage: number;

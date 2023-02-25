@@ -14,7 +14,7 @@ module.exports = class Client {
    /**
     * @param {import("@types/Data").ClientData}
     */
-   constructor({ discordClient, name, status, startedAt, webhook }) {
+   constructor({ discordClient, name, status, webhook }) {
       // construct!!
       this.id = discordClient.application.id;
       this.name = name;
@@ -23,9 +23,9 @@ module.exports = class Client {
          size: 4096
       });
       this.status = status;
-      this.startedAt = startedAt;
       this.webhook = new WebhookClient(webhook);
 
+      this.startedAt = Date.now() - discordClient.uptime;
       this.#token = discordClient.token;
    };
 
