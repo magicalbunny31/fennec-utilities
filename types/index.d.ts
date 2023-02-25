@@ -1,4 +1,4 @@
-import { ClientData, Payload } from "./Data"
+import { ClientData, Status, Payload } from "./Data"
 
 
 export class Client {
@@ -7,7 +7,7 @@ export class Client {
 
    constructor(ClientData: ClientData);
 
-   set setStatus(status: string): string;
+   set setStatus(status: Status): void;
 
    private async getGuilds():  Promise<number>;
    private getCpuPercentage(): number;
