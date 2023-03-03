@@ -252,7 +252,7 @@ module.exports = class Client extends EventEmitter {
 
       // await a response
       if (this.fennecCompatibility) {
-         const response = this.#awaitMessage(messageId);
+         const response = await this.#awaitMessage(messageId);
 
          // send updates
          this.#repeat(response?.nextUpdate);
