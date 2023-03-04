@@ -19,6 +19,8 @@ module.exports = class Client extends EventEmitter {
       // basic info
       this.id = this.discordClient.application.id;
       this.name = options.name;
+      this.formattedName = options.formattedName;
+      this.colour = options.colour;
       this.avatarURL = this.discordClient.user.avatarURL({
          extension: `png`,
          size: 4096
@@ -114,7 +116,9 @@ module.exports = class Client extends EventEmitter {
    async #getUpdate() {
       return {
          id: this.discordClient.application.id,
+         colour: this.colour,
          name: this.name,
+         formattedName: this.formattedName,
          startedAt: this.startedAt,
          guilds: await this.#getGuilds(),
          cpuPercentage: this.#getCpuPercentage(),

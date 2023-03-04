@@ -1,4 +1,4 @@
-import { Client as DiscordClient, WebhookClientData } from "discord.js";
+import { ColorResolvable, Client as DiscordClient, WebhookClientData } from "discord.js";
 
 
 /**
@@ -22,9 +22,11 @@ export type UpdateType = "ready" | "update";
 
 
 export type ClientData = {
+   colour: ColorResolvable;
    discordClient: DiscordClient;
    fennecCompatibility?: FennecCompatibility;
    fennecId: string;
+   formattedName: string;
    name: string;
    status: Status;
    webhook: WebhookClientData
