@@ -238,6 +238,10 @@ module.exports = class Client extends EventEmitter {
     * start the client
     */
    async start() {
+      // fennec compatibility needed
+      if (!this.fennecCompatibility)
+         throw new Error(`@magicalbunny31/fennec-utilities › Client: fennecCompatibility needed to start the client 🚫`);
+
       // client already started
       if (this.started)
          throw new Error(`@magicalbunny31/fennec-utilities › Client: client already started 🚫`);
@@ -251,12 +255,10 @@ module.exports = class Client extends EventEmitter {
       const { id: messageId } = await this.#send(content);
 
       // await a response
-      if (this.fennecCompatibility) {
-         const response = await this.#awaitMessage(messageId);
+      const response = await this.#awaitMessage(messageId);
 
-         // send updates
-         this.#repeat(response?.nextUpdate);
-      };
+      // send updates
+      this.#repeat(response?.nextUpdate);
    };
 
 
