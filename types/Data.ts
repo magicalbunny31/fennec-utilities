@@ -1,13 +1,4 @@
-import { ColorResolvable, Client as DiscordClient, WebhookClientData } from "discord.js";
-
-
-/**
- * when this parameter is specified, fennec-utilities will also receive messages from fennec and send events accordingly
- */
-export type FennecCompatibility = {
-   inGuildId: string;
-   inChannelId: string;
-};
+import { ColorResolvable, WebhookClientData, Snowflake } from "discord.js";
 
 
 /**
@@ -18,34 +9,13 @@ export type FennecCompatibility = {
 export type Status = "online" | "offline soon" | "maintenance";
 
 
-export type UpdateType = "ready" | "update";
+export type Type = "update" | "error";
 
 
 export type ClientData = {
+   avatarURL: string;
    colour: ColorResolvable;
-   discordClient: DiscordClient;
-   fennecCompatibility?: FennecCompatibility;
-   fennecId: string;
-   formattedName: string;
    name: string;
-   status: Status;
-   webhook: WebhookClientData
-};
-
-
-export type UpdatePayload = {
-   id:            string;
-   name:          ClientData[`name`];
-   startedAt:     number;
-   guilds:        number;
-   cpuPercentage: number;
-   memory:        [ string, string ];
-};
-
-
-export type ErrorPayload = {
-   name: string;
-   message: string;
-   stack: string;
-   timestamp: number;
+   threadId: Snowflake;
+   webhook: WebhookClientData;
 };

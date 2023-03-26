@@ -20,6 +20,4 @@ yarn add https://github.com/magicalbunny31/fennec-utilities
 ## why is this public? 📔
 ☁️ mostly so i can download this repository easily~
 <br>
-📦 this is closely related to [@magicalbunny31/awesome-utility-stuff](https://github.com/magicalbunny31/awesome-utility-stuff)'s [`sendBotError`](https://github.com/magicalbunny31/awesome-utility-stuff/blob/main/src/functions/sendBotError.js), which is already public!
-<br>
 📩 however, feel free to swipe some code from [`src/`](./src)! i won't mind~
