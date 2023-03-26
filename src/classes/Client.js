@@ -42,9 +42,10 @@ module.exports = class Client {
     * send an error
     * @param {Error} error error data
     * @param {Date | number} timestamp when this error happened
+    * @param {import("@types/Data").InteractionData | string} interactionOrSource interaction data if this was an interaction or the source for this error
     * @returns {Promise<void>}
     */
-   async sendError(error, timestamp) {
+   async sendError(error, timestamp, interactionOrSource) {
       void await this.#sendMessage({
          type: `error`,
          error: {
@@ -52,7 +53,8 @@ module.exports = class Client {
             stack: error.stack,
             name: error.name
          },
-         timestamp
+         timestamp,
+         interaction: interactionOrSource
       });
    };
 
@@ -71,7 +73,7 @@ module.exports = class Client {
 
    /**
     * update this bot's status
-    * @param {"online" | "offline soon" | "maintenance"} status this bot's status
+    * @param {import("@types/Data").Status} status this bot's status
     */
    async updateStatus(status) {
       void await this.#sendMessage({

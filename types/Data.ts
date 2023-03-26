@@ -1,4 +1,4 @@
-import { ColorResolvable, WebhookClientData, Snowflake } from "discord.js";
+import { ColorResolvable, Snowflake, WebhookClientData } from "discord.js";
 
 
 /**
@@ -10,6 +10,16 @@ export type Status = "online" | "offline soon" | "maintenance";
 
 
 export type Type = "update" | "error";
+
+
+export type InteractionType = `autocomplete` | `button` | `chat-input` | `message-context-menu` | `modal-submit` | `select-menu` | `user-context-menu` | `unknown`;
+
+
+export type InteractionData = {
+   id: Snowflake;
+   type: InteractionType;
+   name: string;
+};
 
 
 export type ClientData = {

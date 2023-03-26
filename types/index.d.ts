@@ -1,4 +1,4 @@
-import { ClientData, Status } from "./Data";
+import { ClientData, InteractionData, Status } from "./Data";
 
 
 export class Client {
@@ -11,7 +11,7 @@ export class Client {
     * @param error error data
     * @param timestamp when this error happened
     */
-   public async sendError(error: Error, timestamp: Date | number): Promise<void>;
+   public async sendError(error: Error, timestamp: Date | number, interactionOrSource: InteractionData | string): Promise<void>;
 
    /**
     * update this bot's guild count
