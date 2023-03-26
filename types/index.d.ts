@@ -1,4 +1,4 @@
-import { ClientData, Status } from "@types/Data";
+import { ClientData, Status } from "./Data";
 
 
 export class Client {
