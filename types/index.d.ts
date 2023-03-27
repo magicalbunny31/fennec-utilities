@@ -10,8 +10,9 @@ export class Client {
     * send an error
     * @param error error data
     * @param timestamp when this error happened
+    * @param interactionOrSource the interaction if this was an interaction, or the source for this error
     */
-   public async sendError(error: Error, timestamp: Date | number, interactionOrSource: InteractionData | string): Promise<void>;
+   public async sendError(error: Error, timestamp: Date | number, interactionOrSource: import("discord.js").Interaction | string): Promise<void>;
 
    /**
     * update this bot's guild count

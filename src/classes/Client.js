@@ -42,10 +42,32 @@ module.exports = class Client {
     * send an error
     * @param {Error} error error data
     * @param {Date | number} timestamp when this error happened
-    * @param {import("@types/Data").InteractionData | string} interactionOrSource interaction data if this was an interaction or the source for this error
+    * @param {import("discord.js").Interaction | string} interactionOrSource the interaction if this was an interaction, or the source for this error
     * @returns {Promise<void>}
     */
    async sendError(error, timestamp, interactionOrSource) {
+      const name = [
+         interactionOrSource.commandName,
+         interactionOrSource.options?.getSubcommandGroup?.(false),
+         interactionOrSource.options?.getSubcommand?.(false)
+      ]
+         .filter(Boolean)
+         .join(` `)
+      || interaction.customId;
+
+      const type = (() => {
+         switch (true) {
+            case interactionOrSource.isAnySelectMenu?.():             return `select-menu`;
+            case interactionOrSource.isAutocomplete?.():              return `autocomplete`;
+            case interactionOrSource.isButton?.():                    return `button`;
+            case interactionOrSource.isChatInputCommand?.():          return `chat-input`;
+            case interactionOrSource.isMessageContextMenuCommand?.(): return `message`;
+            case interactionOrSource.isModalSubmit?.():               return `modal-submit`;
+            case interactionOrSource.isUserContextMenuCommand?.():    return `user`;
+            default:                                                  return `unknown`;
+         };
+      })();
+
       void await this.#sendMessage({
          type: `error`,
          error: {
@@ -54,7 +76,13 @@ module.exports = class Client {
             name: error.name
          },
          timestamp,
-         interaction: interactionOrSource
+         interaction: (name && type)
+            ? {
+               id: interactionOrSource.id,
+               name,
+               type
+            }
+            : `${interactionOrSource}`
       });
    };
 
