@@ -95,12 +95,12 @@ module.exports = class Client {
    async respondToInteractionWithError(interaction) {
       const type = (() => {
          switch (true) {
-            case interactionOrSource.isAnySelectMenu?.():             return `select menu`;
-            case interactionOrSource.isButton?.():                    return `button`;
-            case interactionOrSource.isChatInputCommand?.():          return `slash command`;
-            case interactionOrSource.isMessageContextMenuCommand?.(): return `context menu command`;
-            case interactionOrSource.isModalSubmit?.():               return `modal`;
-            case interactionOrSource.isUserContextMenuCommand?.():    return `context menu command`;
+            case interaction.isAnySelectMenu?.():             return `select menu`;
+            case interaction.isButton?.():                    return `button`;
+            case interaction.isChatInputCommand?.():          return `slash command`;
+            case interaction.isMessageContextMenuCommand?.(): return `context menu command`;
+            case interaction.isModalSubmit?.():               return `modal`;
+            case interaction.isUserContextMenuCommand?.():    return `context menu command`;
             default:                                                  return `interaction`;
          };
       })();
