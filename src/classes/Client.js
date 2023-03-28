@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const { colours, emojis, choice, noop } = require("@magicalbunny31/awesome-utility-stuff");
+const { colours, emojis, choice, noop, strip } = require("@magicalbunny31/awesome-utility-stuff");
 const os = require("os");
 
 
