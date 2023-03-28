@@ -15,6 +15,12 @@ export class Client {
    public async sendError(error: Error, timestamp: Date | number, interactionOrSource: import("discord.js").Interaction | string): Promise<void>;
 
    /**
+    * responds to an interaction, showing an error to the user
+    * @param interaction the interaction to respond to
+    */
+   public async respondToInteractionWithError(interaction: import("discord.js").Interaction): Promise<void>;
+
+   /**
     * update this bot's guild count
     * @param guildCount this bot's guild count
     */
