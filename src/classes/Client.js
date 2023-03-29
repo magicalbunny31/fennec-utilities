@@ -44,7 +44,7 @@ module.exports = class Client {
    /**
     * send an error
     * @param {Error} error error data
-    * @param {Date | number} timestamp when this error happened
+    * @param {Date | number} timestamp timestamp of when this error happened, in seconds
     * @param {import("discord.js").Interaction | string} interactionOrSource the interaction if this was an interaction, or the source for this error
     * @returns {Promise<void>}
     */
