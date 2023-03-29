@@ -177,8 +177,8 @@ module.exports = class Client {
             await interaction.editReply({
                content: null,
                embeds,
-               files: [],
-               components: []
+               components: [],
+               files: []
             });
 
          } catch {
