@@ -16,7 +16,8 @@ module.exports = class Client {
 
       // thread's starter message
       this.threadId = options.threadId;
-      this.name = options.name;
+      this.formattedName = options.formattedName;
+      this.id = options.id;
       this.avatarURL = options.avatarURL;
       this.colour = options.colour;
    };
@@ -26,7 +27,8 @@ module.exports = class Client {
       const json = JSON.stringify({
          ...payload,
          starterMessage: {
-            name: this.name,
+            formattedName: this.formattedName,
+            id: this.id,
             avatarURL: this.avatarURL,
             colour: this.colour
          }
