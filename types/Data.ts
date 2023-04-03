@@ -26,7 +26,7 @@ export type ClientData = {
    avatarURL: string;
    colour: ColorResolvable;
    formattedName: string;
-   id: string;
+   id: Snowflake;
    threadId: Snowflake;
    webhook: WebhookClientData;
 };

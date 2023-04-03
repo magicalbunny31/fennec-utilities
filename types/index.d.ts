@@ -1,10 +1,17 @@
-import { ClientData, InteractionData, Status } from "./Data";
+import { ClientData, FennecFirestore, InteractionData, Status } from "./Data";
 
 
 export class Client {
    constructor(ClientData: ClientData);
 
    private async sendMessage(payload: Object): Promise<void>; // send a message to the webhook, for fennec to respond to
+
+   public avatarURL:     string;
+   public colour:        import("discord.js").ColorResolvable;
+   public formattedName: string;
+   public id:            import("discord.js").Snowflake;
+   public threadId:      import("discord.js").Snowflake;
+   public webhook:       import("discord.js").WebhookClientData;
 
    /**
     * send an error
