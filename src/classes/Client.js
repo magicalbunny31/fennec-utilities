@@ -56,7 +56,7 @@ module.exports = class Client {
       ]
          .filter(Boolean)
          .join(` `)
-      || interaction.customId;
+      || interactionOrSource;
 
       const type = (() => {
          switch (true) {

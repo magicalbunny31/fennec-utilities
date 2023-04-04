@@ -1,6 +1,6 @@
 {
    "name": "@magicalbunny31/fennec-utilities",
-   "version": "2.5.0",
+   "version": "2.5.1",
    "description": "utility package for interacting with fennec 💻",
    "main": "dist/cjs/index.js",
    "module": "dist/esm/index.js",
