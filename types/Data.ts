@@ -30,3 +30,10 @@ export type ClientData = {
    threadId: Snowflake;
    webhook: WebhookClientData;
 };
+
+
+export type FennecFirestore = {
+   clientEmail: string;
+   privateKey: string;
+   projectId: string;
+};
