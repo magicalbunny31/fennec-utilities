@@ -191,18 +191,6 @@ module.exports = class Client {
 
 
    /**
-    * update this bot's guild count
-    * @param {number} guildCount this bot's guild count
-    */
-   async updateGuildCount(guildCount) {
-      void await this.#sendMessage({
-         type: `update`,
-         guildCount
-      });
-   };
-
-
-   /**
     * update this bot's status
     * @param {import("@types/Data").Status} status this bot's status
     */
@@ -216,8 +204,9 @@ module.exports = class Client {
 
    /**
     * update this bot's usage
+    * @param {number} guildCount this bot's guild count
     */
-   async updateUsage() {
+   async updateUsage(guildCount) {
       const cpu = (() => {
          const [ cpu ] = os.cpus();
 
@@ -264,7 +253,8 @@ module.exports = class Client {
       void await this.#sendMessage({
          type: `update`,
          cpu,
-         memory
+         memory,
+         guildCount
       });
    };
 

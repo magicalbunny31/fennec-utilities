@@ -28,12 +28,6 @@ export class Client {
    public async respondToInteractionWithError(interaction: import("discord.js").Interaction): Promise<void>;
 
    /**
-    * update this bot's guild count
-    * @param guildCount this bot's guild count
-    */
-   public async updateGuildCount(guildCount: number): Promise<void>;
-
-   /**
     * update this bot's status
     * @param status this bot's status
     */
@@ -41,6 +35,7 @@ export class Client {
 
    /**
     * update this bot's usage
+    * @param {number} guildCount this bot's guild count
     */
-   public async updateUsage(): Promise<void>;
+   public async updateUsage(guildCount: number): Promise<void>;
 };
