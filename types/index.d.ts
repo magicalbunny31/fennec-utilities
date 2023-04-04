@@ -19,7 +19,7 @@ export class Client {
     * @param timestamp timestamp of when this error happened, in seconds
     * @param interactionOrSource the interaction if this was an interaction, or the source for this error
     */
-   public async sendError(error: Error, timestamp: Date | number, interactionOrSource: import("discord.js").Interaction | string): Promise<void>;
+   public async sendError(error: Error, timestamp: number, interactionOrSource: import("discord.js").Interaction | string): Promise<void>;
 
    /**
     * responds to an interaction, showing an error to the user
