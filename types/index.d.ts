@@ -2,7 +2,11 @@ import { ClientData, FennecFirestore, InteractionData, Status } from "./Data";
 
 
 export class Client {
-   constructor(ClientData: ClientData);
+   /**
+    * fennec-utilities 🦊
+    * @param options options for this client 🎛️
+    */
+   constructor(options: ClientData);
 
    private async sendMessage(payload: Object): Promise<void>; // send a message to the webhook, for fennec to respond to
 
@@ -14,34 +18,34 @@ export class Client {
    public webhook:       import("discord.js").WebhookClientData;
 
    /**
-    * send an error
-    * @param error error data
-    * @param timestamp timestamp of when this error happened, in seconds
-    * @param interactionOrSource the interaction if this was an interaction, or the source for this error
+    * send an error ❗
+    * @param error error data 📣
+    * @param timestamp timestamp of when this error happened, in seconds ⌚
+    * @param interactionOrSource the interaction if this was an interaction, or the source for this error 📋
     */
    public async sendError(error: Error, timestamp: number, interactionOrSource: import("discord.js").Interaction | string): Promise<void>;
 
    /**
-    * responds to an interaction, showing an error to the user
-    * @param interaction the interaction to respond to
+    * responds to an interaction, showing an error to the user 🗯️
+    * @param interaction the interaction to respond to 💬
     */
    public async respondToInteractionWithError(interaction: import("discord.js").Interaction): Promise<void>;
 
    /**
-    * update this bot's status
-    * @param status this bot's status
+    * update this bot's status 💭
+    * @param status this bot's status 🏷️
     */
    public async updateStatus(status: Status): Promise<void>;
 
    /**
-    * update this bot's usage
-    * @param {number} guildCount this bot's guild count
+    * update this bot's usage 🤖
+    * @param {number} guildCount this bot's guild count 📂
     */
    public async updateUsage(guildCount: number): Promise<void>;
 
    /**
-    * update this bot's usage every 10 or so minutes
-    * @param discord discord client for this bot
+    * update this bot's usage every 10 or so minutes ⏱️
+    * @param discord discord client for this bot 🗃️
     */
    public updater(discord: import("discord.js").Client): Promise<void>;
 };

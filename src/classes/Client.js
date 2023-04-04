@@ -7,8 +7,8 @@ module.exports = class Client {
 
 
    /**
-    * fennec-utilities
-    * @param {import("@types/Data").ClientData} options options for this client
+    * fennec-utilities 🦊
+    * @param {import("@types/Data").ClientData} options options for this client 🎛️
     */
    constructor(options) {
       // discord
@@ -42,10 +42,10 @@ module.exports = class Client {
 
 
    /**
-    * send an error
-    * @param {Error} error error data
-    * @param {number} timestamp timestamp of when this error happened, in seconds
-    * @param {import("discord.js").Interaction | string} interactionOrSource the interaction if this was an interaction, or the source for this error
+    * send an error ❗
+    * @param {Error} error the error that happened 📣
+    * @param {number} timestamp timestamp of when this error happened, in seconds ⌚
+    * @param {import("discord.js").Interaction | string} interactionOrSource the interaction if this was an interaction, or the source for this error 📋
     * @returns {Promise<void>}
     */
    async sendError(error, timestamp, interactionOrSource) {
@@ -91,8 +91,8 @@ module.exports = class Client {
 
 
    /**
-    * responds to an interaction, showing an error to the user
-    * @param {import("discord.js").Interaction} interaction the interaction to respond to
+    * responds to an interaction, showing an error to the user 🗯️
+    * @param {import("discord.js").Interaction} interaction the interaction to respond to 💬
     */
    async respondToInteractionWithError(interaction) {
       const type = (() => {
@@ -191,8 +191,8 @@ module.exports = class Client {
 
 
    /**
-    * update this bot's status
-    * @param {import("@types/Data").Status} status this bot's status
+    * update this bot's status 💭
+    * @param {import("@types/Data").Status} status this bot's status 🏷️
     */
    async updateStatus(status) {
       void await this.#sendMessage({
@@ -203,8 +203,8 @@ module.exports = class Client {
 
 
    /**
-    * update this bot's usage
-    * @param {number} guildCount this bot's guild count
+    * update this bot's usage 🤖
+    * @param {number} guildCount this bot's guild count 📂
     */
    async updateUsage(guildCount) {
       const cpu = (() => {
@@ -260,8 +260,8 @@ module.exports = class Client {
 
 
    /**
-    * update this bot's usage every 10 or so minutes
-    * @param {import("discord.js").Client} discord discord client for this bot
+    * update this bot's usage every 10 or so minutes ⏱️
+    * @param {import("discord.js").Client} discord discord client for this bot 🗃️
     */
    updater(discord) {
       // run every 10 minutes
