@@ -68,7 +68,6 @@ module.exports = class Client {
             case interactionOrSource.isMessageContextMenuCommand?.(): return `message`;
             case interactionOrSource.isModalSubmit?.():               return `modal-submit`;
             case interactionOrSource.isUserContextMenuCommand?.():    return `user`;
-            default:                                                  return `unknown`;
          };
       })();
 
@@ -80,7 +79,7 @@ module.exports = class Client {
             name: error.name
          },
          timestamp,
-         interaction: (name && type)
+         interaction: type
             ? {
                id: interactionOrSource.id,
                name,
