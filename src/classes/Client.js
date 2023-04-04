@@ -56,6 +56,7 @@ module.exports = class Client {
       ]
          .filter(Boolean)
          .join(` `)
+      || interactionOrSource.customId
       || interactionOrSource;
 
       const type = (() => {
