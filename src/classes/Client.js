@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const { colours, emojis, choice, noop, strip } = require("@magicalbunny31/awesome-utility-stuff");
+const { colours, emojis, choice, noop, number, strip, wait } = require("@magicalbunny31/awesome-utility-stuff");
 const os = require("os");
 
 
@@ -256,6 +256,32 @@ module.exports = class Client {
          memory,
          guildCount
       });
+   };
+
+
+   /**
+    * update this bot's usage every 10 or so minutes
+    * @param {import("discord.js").Client} discord discord client for this bot
+    */
+   updater(discord) {
+      // run every 10 minutes
+      setInterval(async () => {
+         // wait from 5 seconds to 5 minutes, to prevent other clients from sending requests at the same time
+         const timeToWait = number(1_000 * 5, 1_000 * 5 * 60);
+         await wait(timeToWait);
+
+         try {
+            // get guild count
+            const guildCount = (await discord.guilds.fetch()).size;
+
+            // send client updates
+            await this.updateUsage(guildCount);
+
+         } catch (error) {
+            // well that was awkward, an error occurred
+            return console.error(error.stack);
+         };
+      }, 1_000 * 10 * 60);
    };
 
 

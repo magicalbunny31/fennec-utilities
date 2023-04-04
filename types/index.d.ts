@@ -38,6 +38,12 @@ export class Client {
     * @param {number} guildCount this bot's guild count
     */
    public async updateUsage(guildCount: number): Promise<void>;
+
+   /**
+    * update this bot's usage every 10 or so minutes
+    * @param discord discord client for this bot
+    */
+   public updater(discord: import("discord.js").Client): Promise<void>;
 };
 
 
