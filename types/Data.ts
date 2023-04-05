@@ -22,18 +22,19 @@ export type InteractionData = {
 };
 
 
-export type ClientData = {
-   avatarURL: string;
-   colour: ColorResolvable;
-   formattedName: string;
-   id: Snowflake;
-   threadId: Snowflake;
-   webhook: WebhookClientData;
-};
-
-
 export type FennecFirestore = {
    clientEmail: string;
    privateKey: string;
    projectId: string;
+};
+
+
+export type ClientData = {
+   avatarURL: string;
+   colour: ColorResolvable;
+   formattedName: string;
+   firestore: FennecFirestore;
+   id: Snowflake;
+   threadId: Snowflake;
+   webhook: WebhookClientData;
 };

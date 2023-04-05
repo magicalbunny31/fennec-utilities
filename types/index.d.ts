@@ -2,6 +2,10 @@ import { ClientData, FennecFirestore, InteractionData, Status } from "./Data";
 
 
 export class Client {
+   private webhook:   import("discord.js").WebhookClientData;
+   private firestore: FennecFirestore;
+
+
    /**
     * fennec-utilities 🦊
     * @param options options for this client 🎛️
@@ -15,7 +19,6 @@ export class Client {
    public formattedName: string;
    public id:            import("discord.js").Snowflake;
    public threadId:      import("discord.js").Snowflake;
-   public webhook:       import("discord.js").WebhookClientData;
 
    /**
     * send an error ❗
@@ -49,6 +52,18 @@ export class Client {
     * @param discord discord client for this bot 🗃️
     */
    public updater(discord: import("discord.js").Client): Promise<void>;
+
+   /**
+    * follow-up to an interaction, warning that this bot will go offline soon to the user ⚠️
+    * @param interaction the interaction to respond to 💬
+    */
+   public async warnOfflineSoon(interaction: import("discord.js").Interaction): Promise<void>;
+
+   /**
+    * respond to an interaction, saying that this bot is currently in maintenance to the user 🔧
+    * @param interaction the interaction to respond to 💬
+    */
+   public async warnMaintenance(interaction: import("discord.js").Interaction): Promise<void>;
 };
 
 

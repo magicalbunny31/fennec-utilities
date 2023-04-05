@@ -1,16 +1,30 @@
 const Discord = require("discord.js");
+const { Firestore } = require("@google-cloud/firestore");
 const { colours, emojis, choice, noop, number, strip, wait } = require("@magicalbunny31/awesome-utility-stuff");
 const os = require("os");
 
 
 module.exports = class Client {
+   #webhook;
+   #firestore;
+
+
    /**
     * fennec-utilities 🦊
     * @param {import("@types/Data").ClientData} options options for this client 🎛️
     */
    constructor(options) {
       // discord
-      this.webhook = new Discord.WebhookClient(options.webhook);
+      this.#webhook = new Discord.WebhookClient(options.webhook);
+
+      // firestore
+      this.#firestore = new Firestore({
+         credentials: {
+            client_email: options.firestore.clientEmail,
+            private_key: options.firestore.privateKey
+         },
+         projectId: options.firestore.projectId
+      });
 
       // thread's starter message
       this.threadId = options.threadId;
@@ -32,7 +46,7 @@ module.exports = class Client {
          }
       });
 
-      void await this.webhook.send({
+      void await this.#webhook.send({
          threadId: this.threadId,
          content: Discord.codeBlock(`js`, json)
       });
@@ -285,4 +299,68 @@ module.exports = class Client {
    };
 
 
+   /**
+    * follow-up to an interaction, warning that this bot will go offline soon to the user ⚠️
+    * @param {import("discord.js").Interaction} interaction the interaction to respond to 💬
+    */
+   async warnOfflineSoon(interaction) {
+      const { reason, at } = (await this.#firestore.collection(`stats`).doc(this.id).get()).data().status;
+
+      const embeds = [
+         new Discord.EmbedBuilder()
+            .setColor(colours.red)
+            .setDescription(strip`
+               ${emojis.oi} **${interaction.client.user} will be offline soon!**
+               > "${reason}"
+               > \\~ developers
+            `)
+            .setTimestamp(at.seconds)
+      ];
+
+      try {
+         // attempt to follow-up ephemerally; this *could* have a chance of throwing an error (user deleting message, guild deleted..)
+         await interaction.followUp({
+            embeds,
+            ephemeral: true
+         });
+
+      } finally {
+         noop;
+      };
+
+      return;
+   };
+
+
+   /**
+    * respond to an interaction, saying that this bot is currently in maintenance to the user 🔧
+    * @param {import("discord.js").Interaction} interaction the interaction to respond to 💬
+    */
+   async warnMaintenance(interaction) {
+      const { reason, at } = (await this.#firestore.collection(`stats`).doc(this.id).get()).data().status;
+
+      const embeds = [
+         new Discord.EmbedBuilder()
+            .setColor(colours.red)
+            .setDescription(strip`
+               ${emojis.stop} **${interaction.client.user} is currently in maintenance!**
+               > "${reason}"
+               > \\~ developers
+            `)
+            .setTimestamp(at.seconds)
+      ];
+
+      try {
+         // attempt to follow-up ephemerally; this *could* have a chance of throwing an error (user deleting message, guild deleted..)
+         await interaction.followUp({
+            embeds,
+            ephemeral: true
+         });
+
+      } finally {
+         noop;
+      };
+
+      return;
+   };
 };
