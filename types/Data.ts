@@ -6,7 +6,7 @@ import { ColorResolvable, Snowflake, WebhookClientData } from "discord.js";
  * offline soon : will go offline soon
  * maintenance  : "offline", fennec will take over
  */
-export type Status = "online" | "offline soon" | "maintenance";
+export type Status = "online" | "offline-soon" | "maintenance";
 
 
 export type Type = "update" | "error";
