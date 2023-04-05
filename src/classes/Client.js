@@ -4,10 +4,6 @@ const os = require("os");
 
 
 module.exports = class Client {
-   #statusReason;
-   #statusChangedAtTimestamp;
-
-
    /**
     * fennec-utilities 🦊
     * @param {import("@types/Data").ClientData} options options for this client 🎛️
@@ -195,15 +191,13 @@ module.exports = class Client {
    /**
     * update this bot's status 💭
     * @param {import("@types/Data").Status} status this bot's status 🏷️
-    * @param {string} reason why this bot's status is changing ❓
+    * @param {string} [reason] why this bot's status is changing ❓
     */
    async updateStatus(status, reason) {
-      this.#statusReason             = status !== `online` ? reason                        : null;
-      this.#statusChangedAtTimestamp = status !== `online` ? Math.floor(Date.now() / 1000) : null;
-
       void await this.#sendMessage({
          type: `update`,
-         status
+         status,
+         reason
       });
    };
 
