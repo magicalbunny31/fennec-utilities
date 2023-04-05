@@ -35,6 +35,11 @@ export class Client {
    public async respondToInteractionWithError(interaction: import("discord.js").Interaction): Promise<void>;
 
    /**
+    * get this bot's currently set status 📛
+    */
+   public async getStatus(): Promise<Status>;
+
+   /**
     * update this bot's status 💭
     * @param status this bot's status 🏷️
     * @param reason why this bot's status is changing ❓

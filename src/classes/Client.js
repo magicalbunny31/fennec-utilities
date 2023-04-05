@@ -203,6 +203,15 @@ module.exports = class Client {
 
 
    /**
+    * get this bot's currently set status 📛
+    */
+   async getStatus() {
+      const { name: status } = (await this.#firestore.collection(`stats`).doc(this.id).get()).data().status;
+      return status;
+   };
+
+
+   /**
     * update this bot's status 💭
     * @param {import("@types/Data").Status} status this bot's status 🏷️
     * @param {string} [reason] why this bot's status is changing ❓
