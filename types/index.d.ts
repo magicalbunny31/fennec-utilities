@@ -8,6 +8,9 @@ export class Client {
     */
    constructor(options: ClientData);
 
+   private statusReason:             string?;
+   private statusChangedAtTimestamp: string?;
+
    private async sendMessage(payload: Object): Promise<void>; // send a message to the webhook, for fennec to respond to
 
    public avatarURL:     string;
@@ -34,8 +37,9 @@ export class Client {
    /**
     * update this bot's status 💭
     * @param status this bot's status 🏷️
+    * @param reason why this bot's status is changing ❓
     */
-   public async updateStatus(status: Status): Promise<void>;
+   public async updateStatus(status: Status, reason: string): Promise<void>;
 
    /**
     * update this bot's usage 🤖

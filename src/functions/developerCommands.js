@@ -233,10 +233,10 @@ module.exports = async (message, fennec, fennecFirestore) => {
                      > restart the bot
                      > - if this process isn't managed by a process manager, it won't restart~
 
-                     ${message.client.user} **status** \`online\` | \`offline soon\` | \`maintenance\`
+                     ${message.client.user} **status** \`<online | offline-soon | maintenance>\` \`<reason>\`
                      > changes this bot's set status
                      > - \`online\` : normal usage
-                     > - \`offline soon\` : changes discord status and warns non-developers of downtime soon
+                     > - \`offline-soon\` : changes discord status and warns non-developers of downtime soon
                      > - \`maintenance\` : commands cannot be used by non-developers
 
                      ${message.client.user} **to-do**
@@ -274,12 +274,13 @@ module.exports = async (message, fennec, fennecFirestore) => {
       /* status */
       case `status`: {
          // args
-         const status = message.content
-            .slice(message.content.indexOf(commandName) + commandName.length)
+         const [ status ] = args;
+         const reason = message.content
+            .slice(message.content.indexOf(status) + status.length)
             .trim();
 
          // not a status
-         if (![ `online`, `offline soon`, `maintenance` ].includes(status)) {
+         if (![ `online`, `offline-soon`, `maintenance` ].includes(status)) {
             await message.reply({
                embeds: [
                   developerCommandsEmbed
@@ -298,8 +299,28 @@ module.exports = async (message, fennec, fennecFirestore) => {
             break;
          };
 
+         // no reason
+         if (!reason) {
+            await message.reply({
+               embeds: [
+                  developerCommandsEmbed
+                     .setDescription(strip`
+                        ${emojis.no} **you need to input a reason!**
+                        > for example: why's ${message.client.user}'s status changing to \`${status}\`? ${emojis.mhn}
+                     `)
+               ],
+               files: developerCommandsFiles,
+               allowedMentions: {
+                  repliedUser: false
+               }
+            });
+
+            // stop here
+            break;
+         };
+
          // change status, it's that easy!
-         fennec.updateStatus(status);
+         fennec.updateStatus(status, reason);
 
          // react to the message
          await message.react(emojis.yes);
