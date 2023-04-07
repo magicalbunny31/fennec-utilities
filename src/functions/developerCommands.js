@@ -232,9 +232,9 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
                      > restart the bot
                      > - if this process isn't managed by a process manager, it won't restart~
 
-                     ${message.client.user} **status** \`<online | offline-soon | maintenance>\` \`<reason>\`
+                     ${message.client.user} **status** \`<online | offline-soon | maintenance>\` \`<reason>?\`
                      > changes this bot's set status
-                     > - \`online\` : normal usage
+                     > - \`online\` : normal usage (reason isn't required if changing to \`online\`)
                      > - \`offline-soon\` : changes discord status and warns non-developers of downtime soon
                      > - \`maintenance\` : commands cannot be used by non-developers
 
@@ -298,8 +298,8 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
             break;
          };
 
-         // no reason
-         if (!reason) {
+         // no reason (and not changing to online)
+         if (!reason && [ `offline-soon`, `maintenance` ].includes(status)) {
             await message.reply({
                embeds: [
                   developerCommandsEmbed
