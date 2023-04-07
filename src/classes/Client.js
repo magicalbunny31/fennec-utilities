@@ -354,6 +354,10 @@ module.exports = class Client {
       if (developers.includes(interaction.user.id))
          return;
 
+      await interaction.deferReply({
+         ephemeral: true
+      });
+
       const { reason, at } = (await this.#firestore.collection(`stats`).doc(this.id).get()).data().status;
 
       const embeds = [
@@ -368,10 +372,9 @@ module.exports = class Client {
       ];
 
       try {
-         // attempt to follow-up ephemerally; this *could* have a chance of throwing an error (user deleting message, guild deleted..)
-         await interaction.followUp({
-            embeds,
-            ephemeral: true
+         // attempt to edit the reply; this *could* have a chance of throwing an error (user deleting message, guild deleted..)
+         await interaction.editReply({
+            embeds
          });
 
       } finally {
