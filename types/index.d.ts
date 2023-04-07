@@ -76,7 +76,8 @@ export class Client {
  * fennec-utilities developer commands 💻
  * @param message [discord.js](https://discord.js.org)' message object, found when a [`Message`](https://discord.js.org/#/docs/discord.js/main/class/Message) event is fired from the [`Client`](https://discord.js.org/#/docs/discord.js/main/class/Client) 💬
  * @param fennec this fennec client 🦊
+ * @param developers array of users which can use these commands 🤖
  * @param fennecFirestore credentials for fennec's [`@google-cloud/firestore`](https://cloud.google.com/firestore) 📦
  * @returns stuff happens, the function runs. what else do we need to return? 📰
  */
-export async function developerCommands(message: import("discord.js").Message, fennec: Client, fennecFirestore: FennecFirestore): Promise<void>;
+export async function developerCommands(message: import("discord.js").Message, fennec: Client, developers: import("discord.js").Snowflake[], fennecFirestore: FennecFirestore): Promise<void>;
