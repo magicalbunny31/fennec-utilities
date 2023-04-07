@@ -323,7 +323,7 @@ module.exports = class Client {
                > "${reason}"
                > \\~ developers
             `)
-            .setTimestamp(at.seconds)
+            .setTimestamp(at.seconds * 1000)
       ];
 
       try {
@@ -356,7 +356,7 @@ module.exports = class Client {
                > "${reason}"
                > \\~ developers
             `)
-            .setTimestamp(at.seconds)
+            .setTimestamp(at.seconds * 1000)
       ];
 
       try {
