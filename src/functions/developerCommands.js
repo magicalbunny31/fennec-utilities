@@ -11,10 +11,11 @@ const { name, version } = require("../../package.json");
  * fennec-utilities developer commands 💻
  * @param {Discord.Message} message [discord.js](https://discord.js.org)' message object, found when a [`Message`](https://discord.js.org/#/docs/discord.js/main/class/Message) event is fired from the [`Client`](https://discord.js.org/#/docs/discord.js/main/class/Client) 💬
  * @param {import("../../").Client} fennec this fennec client 🦊
+ * @param {Discord.Snowflake[]} developers array of users which can use these commands 🤖
  * @param {import("../../types/Data").FennecFirestore} fennecFirestore credentials for fennec's [`@google-cloud/firestore`](https://cloud.google.com/firestore) 📦
  * @returns {Promise<void>} stuff happens, the function runs. what else do we need to return? 📰
  */
-module.exports = async (message, fennec, fennecFirestore) => {
+module.exports = async (message, fennec, developers, fennecFirestore) => {
    // firestore
    const firestore = new Firestore({
       credentials: {
@@ -31,8 +32,6 @@ module.exports = async (message, fennec, fennecFirestore) => {
 
 
    // not a developer
-   const developers = JSON.parse(process.env.DEVELOPERS.replaceAll(`'`, `"`));
-
    if (!developers.includes(message.author.id))
       return;
 
