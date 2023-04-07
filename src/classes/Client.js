@@ -311,8 +311,12 @@ module.exports = class Client {
    /**
     * follow-up to an interaction, warning that this bot will go offline soon to the user ⚠️
     * @param {import("discord.js").Interaction} interaction the interaction to respond to 💬
+    * @param {import("discord.js").Snowflake[]} developers array of users which can use these commands 🤖
     */
-   async warnOfflineSoon(interaction) {
+   async warnOfflineSoon(interaction, developers) {
+      if (developers.includes(interaction.user.id))
+         return;
+
       const { reason, at } = (await this.#firestore.collection(`stats`).doc(this.id).get()).data().status;
 
       const embeds = [
@@ -344,8 +348,12 @@ module.exports = class Client {
    /**
     * respond to an interaction, saying that this bot is currently in maintenance to the user 🔧
     * @param {import("discord.js").Interaction} interaction the interaction to respond to 💬
+    * @param {import("discord.js").Snowflake[]} developers array of users which can use these commands 🤖
     */
-   async warnMaintenance(interaction) {
+   async warnMaintenance(interaction, developers) {
+      if (developers.includes(interaction.user.id))
+         return;
+
       const { reason, at } = (await this.#firestore.collection(`stats`).doc(this.id).get()).data().status;
 
       const embeds = [
