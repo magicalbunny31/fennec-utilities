@@ -383,4 +383,15 @@ module.exports = class Client {
 
       return;
    };
+
+
+   /**
+    * get the global blacklist 📃
+    */
+   async getGlobalBlacklist() {
+      const { users = [] } = (await this.#firestore.collection(`blacklist`).doc(`users`).get()).data() || {};
+      return users;
+   };
+
+
 };

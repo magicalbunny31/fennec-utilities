@@ -71,6 +71,11 @@ export class Client {
     * @param developers array of users which can use these commands 🤖
     */
    public async warnMaintenance(interaction: import("discord.js").Interaction, developers: import("discord.js").Snowflake[]): Promise<void>;
+
+   /**
+    * get the global blacklist 📃
+    */
+   public async getGlobalBlacklist(): Promise<import("discord.js").Snowflake[]>
 };
 
 
