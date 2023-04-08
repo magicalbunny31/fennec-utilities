@@ -2,15 +2,14 @@ import { ClientData, FennecFirestore, InteractionData, Status } from "./Data";
 
 
 export class Client {
-   private webhook:   import("discord.js").WebhookClientData;
-   private firestore: FennecFirestore;
-
-
    /**
     * fennec-utilities 🦊
     * @param options options for this client 🎛️
     */
    constructor(options: ClientData);
+
+   private webhook:   import("discord.js").WebhookClientData;
+   private firestore: FennecFirestore;
 
    private async sendMessage(payload: Object): Promise<void>; // send a message to the webhook, for fennec to respond to
 
