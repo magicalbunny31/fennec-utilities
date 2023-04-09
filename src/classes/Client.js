@@ -394,4 +394,33 @@ module.exports = class Client {
    };
 
 
+   /**
+    * respond to an interaction, saying that this user is on the global blacklist 🚫
+    * @param {import("discord.js").Interaction} interaction the interaction to respond to 💬
+    * @param {string} supportGuild the support guild for the user to go, in case they want to dispute this 💭
+    */
+   async warnBlacklisted(interaction, supportGuild) {
+      try {
+         // attempt to reply to the interaction; this *could* have a chance of throwing an error (channel/guild deleted..)
+         await interaction.reply({
+            content: strip`
+               ${emojis.sweats} **well this is awkward, ${interaction.user}..**
+               > you've been blacklisted from using ${interaction.client.user}!
+               > wish to dispute this decision, join the support server below~
+               > ${supportGuild} ${emojis.happ}
+            `,
+            allowedMentions: {
+               parse: []
+            },
+            ephemeral: true
+         });
+
+      } finally {
+         noop;
+      };
+
+      return;
+   };
+
+
 };

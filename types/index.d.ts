@@ -75,6 +75,13 @@ export class Client {
     * get the global blacklist 📃
     */
    public async getGlobalBlacklist(): Promise<import("discord.js").Snowflake[]>
+
+   /**
+    * respond to an interaction, saying that this user is on the global blacklist 🚫
+    * @param interaction the interaction to respond to 💬
+    * @param supportGuild the support guild for the user to go, in case they want to dispute this 💭
+    */
+   public async warnBlacklisted(interaction: import("discord.js").Interaction, supportGuild: string): Promise<void>;
 };
 
 
