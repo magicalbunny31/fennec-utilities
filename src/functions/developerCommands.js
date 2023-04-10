@@ -336,8 +336,8 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
 
          // database path for to-dos
          const database = firestore.collection(`to-do`).doc(fennec.id);
-         const docExists = !!(await database.get(`items`)).data();
-         const { items = [] } = (await database.get(`items`)).data() || {};
+         const docExists = !!(await database.get()).data();
+         const { items = [] } = (await database.get()).data() || {};
 
 
          switch (args[0]) {
