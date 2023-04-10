@@ -234,9 +234,9 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
 
                      ${message.client.user} **status** \`<online | offline-soon | maintenance>\` \`<reason>?\`
                      > changes this bot's set status
-                     > - \`online\` : normal usage (reason isn't required if changing to \`online\`)
-                     > - \`offline-soon\` : changes discord status and warns non-developers of downtime soon
-                     > - \`maintenance\` : commands cannot be used by non-developers
+                     > - \`<online>\` : normal usage (\`<reason>\` isn't required if changing to \`online\`)
+                     > - \`<offline-soon>\` : changes discord status and warns non-developers of downtime soon
+                     > - \`<maintenance>\` : commands cannot be used by non-developers
 
                      ${message.client.user} **to-do**
                      > view all to-do items for this bot
