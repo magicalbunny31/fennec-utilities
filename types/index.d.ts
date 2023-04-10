@@ -60,16 +60,14 @@ export class Client {
    /**
     * follow-up to an interaction, warning that this bot will go offline soon to the user ⚠️
     * @param interaction the interaction to respond to 💬
-    * @param developers array of users which can use these commands 🤖
     */
-   public async warnOfflineSoon(interaction: import("discord.js").Interaction, developers: import("discord.js").Snowflake[]): Promise<void>;
+   public async warnOfflineSoon(interaction: import("discord.js").Interaction): Promise<void>;
 
    /**
     * respond to an interaction, saying that this bot is currently in maintenance to the user 🔧
     * @param interaction the interaction to respond to 💬
-    * @param developers array of users which can use these commands 🤖
     */
-   public async warnMaintenance(interaction: import("discord.js").Interaction, developers: import("discord.js").Snowflake[]): Promise<void>;
+   public async warnMaintenance(interaction: import("discord.js").Interaction): Promise<void>;
 
    /**
     * get the global blacklist 📃
