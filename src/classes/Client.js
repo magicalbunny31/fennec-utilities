@@ -406,7 +406,7 @@ module.exports = class Client {
             content: strip`
                ${emojis.sweats} **well this is awkward, ${interaction.user}..**
                > you've been blacklisted from using ${interaction.client.user}!
-               > wish to dispute this decision, join the support server below~
+               > if you wish to dispute this decision, join the support server below~
                > ${supportGuild} ${emojis.happ}
             `,
             allowedMentions: {
