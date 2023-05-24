@@ -80,6 +80,15 @@ export class Client {
     * @param supportGuild the support guild for the user to go, in case they want to dispute this 💭
     */
    public async warnBlacklisted(interaction: import("discord.js").Interaction, supportGuild: string): Promise<void>;
+
+   /**
+    * get the current alert for this bot 🚨
+    */
+   public async getAlert(): Promise<{
+      "alert-content": string;
+      "alert-ends":    import("@google-cloud/firestore").Timestamp;
+      "alert-started": import("@google-cloud/firestore").Timestamp;
+   }?>
 };
 
 

@@ -415,4 +415,20 @@ module.exports = class Client {
    };
 
 
+   /**
+    * get the current alert for this bot 🚨
+    */
+   async getAlert() {
+      // get the alert for this id
+      const alert = (await this.#firestore.collection(`alert`).doc(this.id).get()).data() || {};
+
+      // this alert is outdated (or it doesn't exist)
+      if (alert?.[`alert-ends`].seconds <= Math.floor(Date.now() / 1000))
+         return null;
+
+      // return the alert
+      return alert;
+   };
+
+
 };
