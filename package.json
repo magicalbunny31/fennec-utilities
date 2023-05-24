@@ -22,9 +22,9 @@
    },
    "homepage": "https://github.com/magicalbunny31/fennec-utilities#readme",
    "dependencies": {
-      "@google-cloud/firestore": "^6.5.0",
+      "@google-cloud/firestore": "^6.6.0",
       "@magicalbunny31/awesome-utility-stuff": "github:magicalbunny31/awesome-utility-stuff",
-      "discord.js": "^14.9.0"
+      "discord.js": "^14.11.0"
    },
    "engines": {
       "node": ">=16.9.0"
