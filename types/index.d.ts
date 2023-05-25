@@ -89,6 +89,14 @@ export class Client {
       "alert-ends":    import("@google-cloud/firestore").Timestamp;
       "alert-started": import("@google-cloud/firestore").Timestamp;
    }?>
+
+   /**
+    * get the current announcement for this bot 📣
+    */
+   public async getAnnouncement(): Promise<{
+      "announcement-content":   string;
+      "announcement-created-at": import("@google-cloud/firestore").Timestamp;
+   }?>
 };
 
 

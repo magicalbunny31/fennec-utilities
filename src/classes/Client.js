@@ -420,14 +420,26 @@ module.exports = class Client {
     */
    async getAlert() {
       // get the alert for this id
-      const alert = (await this.#firestore.collection(`alert`).doc(this.id).get()).data() || {};
+      const alert = (await this.#firestore.collection(`alert`).doc(this.id).get()).data();
 
       // this alert is outdated (or it doesn't exist)
       if (alert?.[`alert-ends`].seconds <= Math.floor(Date.now() / 1000))
-         return null;
+         return undefined;
 
       // return the alert
       return alert;
+   };
+
+
+   /**
+    * get the current announcement for this bot 📣
+    */
+   async getAnnouncement() {
+      // get the announcement for this id
+      const announcement = (await this.#firestore.collection(`announcement`).doc(this.id).get()).data();
+
+      // return the announcement
+      return announcement;
    };
 
 
