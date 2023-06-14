@@ -183,6 +183,9 @@ module.exports = class Client {
             ephemeral: true
          });
 
+      } catch {
+         noop;
+
       } finally {
          // this *could* have a chance of throwing an error (user deleting message, guild deleted..)
          try {
