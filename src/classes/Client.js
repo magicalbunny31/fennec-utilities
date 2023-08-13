@@ -68,8 +68,8 @@ module.exports = class Client {
       ]
          .filter(Boolean)
          .join(` `)
-      || interactionOrSource.customId
-      || interactionOrSource;
+         || interactionOrSource.customId
+         || interactionOrSource;
 
       const type = (() => {
          switch (true) {
@@ -115,7 +115,7 @@ module.exports = class Client {
             case interaction.isMessageContextMenuCommand?.(): return `context menu command`;
             case interaction.isModalSubmit?.():               return `modal`;
             case interaction.isUserContextMenuCommand?.():    return `context menu command`;
-            default:                                                  return `interaction`;
+            default:                                          return `interaction`;
          };
       })();
 
@@ -169,7 +169,7 @@ module.exports = class Client {
          new Discord.EmbedBuilder()
             .setColor(colours.red)
             .setDescription(strip`
-               ${emojis.rip} **an error occurred with this ${type}..**
+               ### ${emojis.rip} an error occurred with this ${type}..
                > ${response}
             `)
             .setFooter({
@@ -322,7 +322,7 @@ module.exports = class Client {
          new Discord.EmbedBuilder()
             .setColor(colours.red)
             .setDescription(strip`
-               ${emojis.oi} **${interaction.client.user} will be offline soon!**
+               ### ${emojis.oi} ${interaction.client.user} will be offline soon!
                > "${reason}"
                > \\~ developers
             `)
@@ -359,7 +359,7 @@ module.exports = class Client {
          new Discord.EmbedBuilder()
             .setColor(colours.red)
             .setDescription(strip`
-               ${emojis.stop} **${interaction.client.user} is currently in maintenance!**
+               ### ${emojis.stop} ${interaction.client.user} is currently in maintenance!
                > "${reason}"
                > \\~ developers
             `)
@@ -399,7 +399,7 @@ module.exports = class Client {
          // attempt to reply to the interaction; this *could* have a chance of throwing an error (channel/guild deleted..)
          await interaction.reply({
             content: strip`
-               ${emojis.sweats} **well this is awkward, ${interaction.user}..**
+               ### ${emojis.sweats} well this is awkward, ${interaction.user}..
                > you've been blacklisted from using ${interaction.client.user}!
                > if you wish to dispute this decision, join the support server below~
                > ${supportGuild} ${emojis.happ}

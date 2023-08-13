@@ -219,33 +219,35 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
             embeds: [
                developerCommandsEmbed
                   .setDescription(strip`
-                     ${message.client.user} **ephemeral-evaluate** \`<code>\`
-                     > basically evaluate except it doesn't respond with anything
+                     ### ${message.client.user} ephemeral-evaluate __\`code\`__
+                     > - basically evaluate except it doesn't respond with anything
 
-                     ${message.client.user} **evaluate** \`<code>\`
-                     > evaluate some javascript code on this process
+                     ### ${message.client.user} evaluate __\`code\`__
+                     > - evaluate some js code on this process
 
-                     ${message.client.user} **help**
-                     > see this command?? yes, that's the help command!!
+                     ### ${message.client.user} help
+                     > - see this command??
+                     >  - yes, that's the help command!!
 
-                     ${message.client.user} **restart**
-                     > restart the bot
-                     > - if this process isn't managed by a process manager, it won't restart~
+                     ### ${message.client.user} restart
+                     > - restarts the bot
+                     >  - if this process isn't managed by a process manager, it won't restart~
+                     >  - *~~..this literally just stops its process and lets the process manager start it again~~*
 
-                     ${message.client.user} **status** \`<online | offline-soon | maintenance>\` \`<reason>?\`
-                     > changes this bot's set status
-                     > - \`<online>\` : normal usage (\`<reason>\` isn't required if changing to \`online\`)
-                     > - \`<offline-soon>\` : changes discord status and warns non-developers of downtime soon
-                     > - \`<maintenance>\` : commands cannot be used by non-developers
+                     ### ${message.client.user} status __\`online | offline-soon | maintenance\`__ __\`reason\`__?
+                     > - changes this bot's set status
+                     >  - __\`online\`__ : normal usage (\`reason\` is null if changing to __\`online\`__)
+                     >  - __\`offline-soon\`__ : changes discord status and warns non-developers of downtime soon
+                     >  - __\`maintenance\`__ : commands cannot be used by non-developers
 
-                     ${message.client.user} **to-do**
-                     > view all to-do items for this bot
+                     ### ${message.client.user} to-do
+                     > - view all to-do items for this bot
 
-                     ${message.client.user} **to-do add** \`<item name>\`
-                     > adds a to-do item for this bot
+                     ### ${message.client.user} to-do add __\`item name\`__
+                     > - adds a to-do item for this bot
 
-                     ${message.client.user} **to-do remove** \`<item index>\`
-                     > removes a to-do item with this index for this bot
+                     ### ${message.client.user} to-do remove __\`item index\`__
+                     > - removes a to-do item with this index for this bot
                   `)
             ],
             files: developerCommandsFiles,
