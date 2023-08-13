@@ -298,7 +298,7 @@ module.exports = class Client {
 
          try {
             // get guild count
-            const guildCount = (await discord.guilds.fetch()).size;
+            const guildCount = discord.guilds.cache.size;
 
             // send client updates
             await this.updateUsage(guildCount);
