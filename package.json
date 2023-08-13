@@ -1,6 +1,6 @@
 {
    "name": "@magicalbunny31/fennec-utilities",
-   "version": "2.14.1",
+   "version": "2.14.2",
    "description": "utility package for interacting with fennec 💻",
    "main": "dist/cjs/index.js",
    "module": "dist/esm/index.js",
@@ -22,11 +22,11 @@
    },
    "homepage": "https://github.com/magicalbunny31/fennec-utilities#readme",
    "dependencies": {
-      "@google-cloud/firestore": "^6.6.1",
+      "@google-cloud/firestore": "^6.7.0",
       "@magicalbunny31/awesome-utility-stuff": "github:magicalbunny31/awesome-utility-stuff",
-      "discord.js": "^14.11.0"
+      "discord.js": "^14.12.1"
    },
    "engines": {
-      "node": ">=16.9.0"
+      "node": ">=16.11.0"
    }
 }
