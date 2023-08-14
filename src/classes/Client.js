@@ -209,7 +209,11 @@ module.exports = class Client {
     * get this bot's currently set status 📛
     */
    async getStatus() {
-      const { name: status } = (await this.#firestore.collection(`stats`).doc(this.id).get()).data().status;
+      const statsDocRef  = this.#firestore.collection(`stats`).doc(this.id);
+      const statsDocSnap = await statsDocRef.get();
+      const statsDocData = statsDocSnap.data() || {};
+
+      const status = statsDocData.name;
       return status;
    };
 
@@ -384,7 +388,11 @@ module.exports = class Client {
     * get the global blacklist 📃
     */
    async getGlobalBlacklist() {
-      const { users = [] } = (await this.#firestore.collection(`blacklist`).doc(`users`).get()).data() || {};
+      const blacklistDocRef  = this.#firestore.collection(`blacklist`).doc(`users`);
+      const blacklistDocSnap = await blacklistDocRef.get();
+      const blacklistDocData = blacklistDocSnap.data() || {};
+
+      const users = blacklistDocData.users || [];
       return users;
    };
 
