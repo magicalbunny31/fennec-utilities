@@ -68,28 +68,28 @@ export class Client {
     * get the current notification for this application 📰
     * @param type type of notification to get 📣
     */
-   public async getNotification<T extends NotificationType>(type: Omit<NotificationType, "blacklist">): Promise<NotificationReturnType<T>>?;
+   public async getNotification<T extends NotificationType>(type: "alert" | "announcement" | "maintenance" | "offline-soon"): Promise<NotificationReturnType<T>>?;
 
    /**
     * notify a user of a notification 📰
     * @param interaction the interaction to respond to 💬
     * @param type type of notification 📣
     */
-   public async notify(interaction: import("discord.js").Interaction, type: NotificationType): Promise<void>;
+   public async notify(interaction: import("discord.js").Interaction, type: "alert" | "blacklist" | "maintenance" | "offline-soon"): Promise<void>;
 
    /**
     * check if a user has seen this notification 📋
     * @param user this user to check 👤
     * @param type type of notification to check if this user has seen 📣
     */
-   public async hasSeenNotification(user: import("discord.js").User, type: Omit<NotificationType, "announcement" | "blacklist" | "maintenance">): Promise<boolean>;
+   public async hasSeenNotification(user: import("discord.js").User, type: "alert" | "offline-soon"): Promise<boolean>;
 
    /**
     * set that a user has seen a notification 📋
     * @param user this user to set 👤
     * @param type type of notification to set that this user has seen 📣
     */
-   public async setSeenNotification(user: import("discord.js").User, type: Omit<NotificationType, "announcement" | "blacklist" | "maintenance">): Promise<void>;
+   public async setSeenNotification(user: import("discord.js").User, type: "alert" | "offline-soon"): Promise<void>;
 };
 
 
