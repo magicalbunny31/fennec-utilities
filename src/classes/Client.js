@@ -461,8 +461,8 @@ module.exports = class Client {
 
       // check the delete field to see if this notification has expired
       const currentTimestamp      = Math.floor(Date.now() / 1000);
-      const notificationExpiresAt = notificationsDocData.delete?.seconds || 0;
-      if (notificationExpiresAt < currentTimestamp)
+      const notificationExpiresAt = notificationsDocData.delete?.seconds;
+      if (notificationExpiresAt && notificationExpiresAt < currentTimestamp)
          return false;
 
       // if there's an entry for this user, they've seen this notification
@@ -478,20 +478,27 @@ module.exports = class Client {
    async setSeenNotification(user, type) {
       // firestore
       const notificationsDocRef  = this.#firestore.collection(`${type}-notifications`).doc(this.id);
+      const notificationsDocSnap = await notificationsDocRef.get();
 
       // this notification
       const notification = await this.getNotification(type);
 
       // this notification has expired
       const currentTimestamp      = Math.floor(Date.now() / 1000);
-      const notificationExpiresAt = notification[`expires-at`]?.seconds || 0;
-      if (notificationExpiresAt < currentTimestamp)
+      const notificationExpiresAt = notification[`expires-at`]?.seconds;
+      if (notificationExpiresAt && notificationExpiresAt < currentTimestamp)
          return false;
 
-      // set the notification
-      void await notificationsDocRef.update({
+      // payload for the database
+      const payload = {
          [user.id]: new Timestamp(currentTimestamp, 0)
-      });
+      };
+
+      // set the notification
+      if (!notificationsDocSnap.exists)
+         void await notificationsDocRef.set(payload);
+      else
+         void await notificationsDocRef.update(payload);
    };
 
 
