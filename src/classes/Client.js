@@ -440,7 +440,7 @@ module.exports = class Client {
             void await interaction.editReply(payload);
 
          else // attempt to follow-up (ephemerally)
-            void await interaction.reply(payload);
+            void await interaction.followUp(payload);
 
       } finally { // this *could* have a chance of throwing an error (user deleting message, guild deleted..)
          noop;
