@@ -1,31 +1,7 @@
-// imports
 import { ClientData, FennecFirestore, InteractionData, Status } from "./Data";
+import { NotificationReturnType, NotificationType } from "./Notification";
 
 
-
-// types
-interface Notification {
-   "content":    string;
-   "created-at": import("@google-cloud/firestore").Timestamp;
-   "expires-at": import("@google-cloud/firestore").Timestamp;
-};
-
-type NotificationAlert        =      Notification;
-type NotificationAnnouncement = Omit<Notification, "expires-at">;
-type NotificationMaintenance  = Omit<Notification, "expires-at">;
-type NotificationOfflineSoon  = Omit<Notification, "expires-at">;
-
-type NotificationType = "alert" | "announcement" | "maintenance" | "offline-soon";
-
-type NotificationReturnType<T> =
-   T extends "alert"        ? NotificationAlert        :
-   T extends "announcement" ? NotificationAnnouncement : 
-   T extends "offline-soon" ? NotificationOfflineSoon  :
-   never;
-
-
-
-// exports
 export class Client {
    /**
     * fennec-utilities 🦊
@@ -91,28 +67,28 @@ export class Client {
     * get the current notification for this application 📰
     * @param type type of notification to get 📣
     */
-   public async getNotification<T extends NotificationType>(type: NotificationType): Promise<NotificationReturnType<T>>?;
+   public async getNotification<T extends NotificationType>(type: Omit<NotificationType, "blacklist">): Promise<NotificationReturnType<T>>?;
 
    /**
     * notify a user of a notification 📰
     * @param interaction the interaction to respond to 💬
     * @param type type of notification 📣
     */
-   public async notify(interaction: import("discord.js").Interaction, type: "alert" | "blacklist" | "maintenance" | "offline-soon"): Promise<void>;
+   public async notify(interaction: import("discord.js").Interaction, type: NotificationType): Promise<void>;
 
    /**
     * check if a user has seen this notification 📋
     * @param user this user to check 👤
-    * @param firestoreCollectionName type of notification to check if this user has seen 📣
+    * @param type type of notification to check if this user has seen 📣
     */
-   public async hasSeenNotification(user: import("discord.js").User, firestoreCollectionName: "alert" | "offline-soon"): Promise<boolean>;
+   public async hasSeenNotification(user: import("discord.js").User, type: Omit<NotificationType, "announcement" | "blacklist" | "maintenance">): Promise<boolean>;
 
    /**
     * set that a user has seen a notification 📋
     * @param user this user to set 👤
-    * @param firestoreCollectionName type of notification to set that this user has seen 📣
+    * @param type type of notification to set that this user has seen 📣
     */
-   public async setSeenNotification(user: import("discord.js").User, firestoreCollectionName: "alert" | "offline-soon"): Promise<void>;
+   public async setSeenNotification(user: import("discord.js").User, type: Omit<NotificationType, "announcement" | "blacklist" | "maintenance">): Promise<void>;
 };
 
 
@@ -122,6 +98,6 @@ export class Client {
  * @param fennec this fennec client 🦊
  * @param developers array of users which can use these commands 🤖
  * @param fennecFirestore credentials for fennec's [`@google-cloud/firestore`](https://cloud.google.com/firestore) 📦
- * @returns stuff happens, the function runs. what else do we need to return? 📰
+ * @returns stuff happens, the function runs....what else do we need to return? 📰
  */
 export async function developerCommands(message: import("discord.js").Message, fennec: Client, developers: import("discord.js").Snowflake[], fennecFirestore: FennecFirestore): Promise<void>;
