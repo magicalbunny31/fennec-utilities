@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const { Firestore } = require("@google-cloud/firestore");
+const { Firestore, Timestamp } = require("@google-cloud/firestore");
 const { colours, emojis, choice, noop, number, strip, wait } = require("@magicalbunny31/awesome-utility-stuff");
 const os = require("os");
 
@@ -419,30 +419,65 @@ module.exports = class Client {
 
 
    /**
-    * get the current alert for this bot 🚨
+    * get the current notification for this application 📰
+    * @param {"alert" | "announcement" | "offline-soon"} type the type of notification to get 📣
     */
-   async getAlert() {
-      // get the alert for this id
-      const alert = (await this.#firestore.collection(`alert`).doc(this.id).get()).data();
+   async getNotification(type) {
+      // firestore
+      const statsDocRef  = this.#firestore.collection(`stats`).doc(this.id);
+      const statsDocSnap = await statsDocRef.get();
+      const statsDocData = statsDocSnap.data() || {};
 
-      // this alert is outdated (or it doesn't exist)
-      if (alert?.[`alert-ends`].seconds <= Math.floor(Date.now() / 1000))
-         return undefined;
-
-      // return the alert
-      return alert;
+      // notification
+      const notification = statsDocData[type];
+      return notification;
    };
 
 
    /**
-    * get the current announcement for this bot 📣
+    * check if a user has seen this notification 📋
+    * @param {import("discord.js").User} user this user to check 👤
+    * @param {"alert" | "offline-soon"} firestoreCollectionName the type of notification to check if this user has seen 📣
     */
-   async getAnnouncement() {
-      // get the announcement for this id
-      const announcement = (await this.#firestore.collection(`announcement`).doc(this.id).get()).data();
+   async hasSeenNotification(user, firestoreCollectionName) {
+      // firestore
+      const notificationsDocRef  = this.#firestore.collection(`${firestoreCollectionName}-notifications`).doc(this.id);
+      const notificationsDocSnap = await notificationsDocRef.get();
+      const notificationsDocData = notificationsDocSnap.data() || {};
 
-      // return the announcement
-      return announcement;
+      // check the delete field to see if this notification has expired
+      const currentTimestamp      = Math.floor(Date.now() / 1000);
+      const notificationExpiresAt = notificationsDocData.delete?.seconds || 0;
+      if (notificationExpiresAt < currentTimestamp)
+         return false;
+
+      // if there's an entry for this user, they've seen this notification
+      return user.id in notificationsDocData;
+   };
+
+
+   /**
+    * set that a user has seen a notification 📋
+    * @param {import("discord.js").User} user this user to set 👤
+    * @param {"alert" | "offline-soon"} firestoreCollectionName the type of notification to set that this user has seen 📣
+    */
+   async setSeenNotification(user, firestoreCollectionName) {
+      // firestore
+      const notificationsDocRef  = this.#firestore.collection(`${firestoreCollectionName}-notifications`).doc(this.id);
+
+      // this notification
+      const notification = await this.getNotification(firestoreCollectionName);
+
+      // this notification has expired
+      const currentTimestamp      = Math.floor(Date.now() / 1000);
+      const notificationExpiresAt = notification[`expires-at`]?.seconds || 0;
+      if (notificationExpiresAt < currentTimestamp)
+         return false;
+
+      // set the notification
+      void await notificationsDocRef.update({
+         [user.id]: new Timestamp(currentTimestamp, 0)
+      });
    };
 
 

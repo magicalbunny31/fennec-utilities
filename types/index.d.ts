@@ -1,6 +1,30 @@
+// imports
 import { ClientData, FennecFirestore, InteractionData, Status } from "./Data";
 
 
+
+// types
+interface Alert {
+   "content":    string;
+   "expires-at": import("@google-cloud/firestore").Timestamp;
+   "created-at": import("@google-cloud/firestore").Timestamp;
+};
+
+type NotificationAlert        =      Alert;
+type NotificationAnnouncement = Omit<Alert, "expires-at">;
+type NotificationOfflineSoon  = Omit<Alert, "expires-at">;
+
+type NotificationType = "alert" | "announcement" | "offline-soon";
+
+type NotificationReturnType<T> =
+   T extends "alert"        ? NotificationAlert        :
+   T extends "announcement" ? NotificationAnnouncement : 
+   T extends "offline-soon" ? NotificationOfflineSoon  :
+   never;
+
+
+
+// exports
 export class Client {
    /**
     * fennec-utilities 🦊
@@ -82,21 +106,24 @@ export class Client {
    public async warnBlacklisted(interaction: import("discord.js").Interaction, supportGuild: string): Promise<void>;
 
    /**
-    * get the current alert for this bot 🚨
+    * get the current notification for this application 📰
+    * @param type the type of notification to get 📣
     */
-   public async getAlert(): Promise<{
-      "alert-content": string;
-      "alert-ends":    import("@google-cloud/firestore").Timestamp;
-      "alert-started": import("@google-cloud/firestore").Timestamp;
-   }?>
+   public async getNotification<T extends NotificationType>(type: NotificationType): Promise<NotificationReturnType<T>>?;
 
    /**
-    * get the current announcement for this bot 📣
+    * check if a user has seen this notification 📋
+    * @param user this user to check 👤
+    * @param firestoreCollectionName the type of notification to check if this user has seen 📣
     */
-   public async getAnnouncement(): Promise<{
-      "announcement-content":   string;
-      "announcement-created-at": import("@google-cloud/firestore").Timestamp;
-   }?>
+   public async hasSeenNotification(user: import("discord.js").User, firestoreCollectionName: "alert" | "offline-soon"): Promise<boolean>;
+
+   /**
+    * set that a user has seen a notification 📋
+    * @param user this user to set 👤
+    * @param firestoreCollectionName the type of notification to set that this user has seen 📣
+    */
+   public async setSeenNotification(user: import("discord.js").User, firestoreCollectionName: "alert" | "offline-soon"): Promise<void>
 };
 
 
