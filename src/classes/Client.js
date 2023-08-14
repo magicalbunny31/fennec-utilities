@@ -21,17 +21,20 @@ module.exports = class Client {
       this.#firestore = new Firestore({
          credentials: {
             client_email: options.firestore.clientEmail,
-            private_key: options.firestore.privateKey
+            private_key:  options.firestore.privateKey
          },
          projectId: options.firestore.projectId
       });
 
       // thread's starter message
-      this.threadId = options.threadId;
+      this.threadId      = options.threadId;
       this.formattedName = options.formattedName;
-      this.id = options.id;
-      this.avatarURL = options.avatarURL;
-      this.colour = options.colour;
+      this.id            = options.id;
+      this.avatarURL     = options.avatarURL;
+      this.colour        = options.colour;
+
+      // other
+      this.supportGuild = options.supportGuild;
    };
 
 
@@ -316,75 +319,6 @@ module.exports = class Client {
 
 
    /**
-    * follow-up to an interaction, warning that this bot will go offline soon to the user ⚠️
-    * @param {import("discord.js").Interaction} interaction the interaction to respond to 💬
-    */
-   async warnOfflineSoon(interaction, developers) {
-      const { reason, at } = (await this.#firestore.collection(`stats`).doc(this.id).get()).data().status;
-
-      const embeds = [
-         new Discord.EmbedBuilder()
-            .setColor(colours.red)
-            .setDescription(strip`
-               ### ${emojis.oi} ${interaction.client.user} will be offline soon!
-               > "${reason}"
-               > \\~ developers
-            `)
-            .setTimestamp(at.seconds * 1000)
-      ];
-
-      try {
-         // attempt to follow-up ephemerally; this *could* have a chance of throwing an error (user deleting message, guild deleted..)
-         await interaction.followUp({
-            embeds,
-            ephemeral: true
-         });
-
-      } finally {
-         noop;
-      };
-
-      return;
-   };
-
-
-   /**
-    * respond to an interaction, saying that this bot is currently in maintenance to the user 🔧
-    * @param {import("discord.js").Interaction} interaction the interaction to respond to 💬
-    */
-   async warnMaintenance(interaction) {
-      await interaction.deferReply({
-         ephemeral: true
-      });
-
-      const { reason, at } = (await this.#firestore.collection(`stats`).doc(this.id).get()).data().status;
-
-      const embeds = [
-         new Discord.EmbedBuilder()
-            .setColor(colours.red)
-            .setDescription(strip`
-               ### ${emojis.stop} ${interaction.client.user} is currently in maintenance!
-               > "${reason}"
-               > \\~ developers
-            `)
-            .setTimestamp(at.seconds * 1000)
-      ];
-
-      try {
-         // attempt to edit the reply; this *could* have a chance of throwing an error (user deleting message, guild deleted..)
-         await interaction.editReply({
-            embeds
-         });
-
-      } finally {
-         noop;
-      };
-
-      return;
-   };
-
-
-   /**
     * get the global blacklist 📃
     */
    async getGlobalBlacklist() {
@@ -398,43 +332,21 @@ module.exports = class Client {
 
 
    /**
-    * respond to an interaction, saying that this user is on the global blacklist 🚫
-    * @param {import("discord.js").Interaction} interaction the interaction to respond to 💬
-    * @param {string} supportGuild the support guild for the user to go, in case they want to dispute this 💭
-    */
-   async warnBlacklisted(interaction, supportGuild) {
-      try {
-         // attempt to reply to the interaction; this *could* have a chance of throwing an error (channel/guild deleted..)
-         await interaction.reply({
-            content: strip`
-               ### ${emojis.sweats} well this is awkward, ${interaction.user}..
-               > you've been blacklisted from using ${interaction.client.user}!
-               > if you wish to dispute this decision, join the support server below~
-               > ${supportGuild} ${emojis.happ}
-            `,
-            allowedMentions: {
-               parse: []
-            },
-            ephemeral: true
-         });
-
-      } finally {
-         noop;
-      };
-
-      return;
-   };
-
-
-   /**
     * get the current notification for this application 📰
-    * @param {"alert" | "announcement" | "offline-soon"} type the type of notification to get 📣
+    * @param {"alert" | "announcement" | "maintenance" | "offline-soon"} type type of notification to get 📣
     */
    async getNotification(type) {
       // firestore
       const statsDocRef  = this.#firestore.collection(`stats`).doc(this.id);
       const statsDocSnap = await statsDocRef.get();
       const statsDocData = statsDocSnap.data() || {};
+
+      // this is a status
+      if ([ `maintenance`, `offline-soon` ].includes(type))
+         return {
+            "content":    statsDocData.status.reason,
+            "created-at": statsDocData.status.at
+         };
 
       // notification
       const notification = statsDocData[type];
@@ -443,9 +355,103 @@ module.exports = class Client {
 
 
    /**
+    * notify a user of a notification 📰
+    * @param {import("discord.js").Interaction} interaction the interaction to respond to 💬
+    * @param {"alert" | "blacklist" | "maintenance" | "offline-soon"} type type of notification 📣
+    */
+   async notify(interaction, type) {
+      // what to do for thus type
+      const blockInteraction = [ `blacklist`, `maintenance` ].includes(type);
+
+      // defer the interaction
+      if (blockInteraction)
+         await interaction.deferReply({
+            ephemeral: true
+         });
+
+      // firestore
+      const notification = await this.getNotification(type);
+
+      // interaction payload
+      const payload = (() => {
+         switch (type) {
+            case `alert`: return {
+               embeds: [
+                  new Discord.EmbedBuilder()
+                     .setColor(this.colour)
+                     .setTitle(`${emojis.oi} new alert!`)
+                     .setDescription(strip`
+                        ${notification.content}
+   
+                        > - \`STARTED\` ${Discord.time(notification[`created-at`].seconds, Discord.TimestampStyles.RelativeTime)}
+                        > - \`ENDS   \` ${Discord.time(notification[`expires-at`].seconds, Discord.TimestampStyles.RelativeTime)}
+                     `)
+               ],
+               ephemeral: true
+            };
+
+            case `offline-soon`: return {
+               embeds: [
+                  new Discord.EmbedBuilder()
+                     .setColor(colours.orange)
+                     .setTitle(`${emojis.shhh} i'll be offline soon~`)
+                     .setDescription(strip`
+                        "${notification.content}"
+                        ~ the devs ${emojis.happ}
+   
+                        > - \`STARTED\` ${Discord.time(notification[`created-at`].seconds, Discord.TimestampStyles.RelativeTime)}
+                     `)
+               ],
+               ephemeral: true
+            };
+
+            case `maintenance`: return {
+               embeds: [
+                  new Discord.EmbedBuilder()
+                     .setColor(colours.red)
+                     .setTitle(`${emojis.stop} offline for maintenance~`)
+                     .setDescription(strip`
+                        "${notification.content}"
+                        ~ the devs ${emojis.happ}
+   
+                        > - \`STARTED\` ${Discord.time(notification[`created-at`].seconds, Discord.TimestampStyles.RelativeTime)}
+                     `)
+               ]
+            };
+
+            case `blacklist`: return {
+               content: `> support server: ${this.supportGuild}`,
+               embeds: [
+                  new Discord.EmbedBuilder()
+                     .setColor(colours.fennec)
+                     .setTitle(`${emojis.haha_uhh} well, this is awkward..`)
+                     .setDescription(strip`
+                        > - you've been blacklisted from using these services..
+                        >  - you can view the ${Discord.hyperlink(`terms of service here`, `https://bots.nuzzles.dev/terms-of-service`)}~
+                        > - think this was in error? join the ${Discord.hyperlink(`support server`, this.supportGuild)} to dispute this decision!
+                     `)
+               ]
+            };
+         }
+      })();
+
+      try {
+         if (blockInteraction) // attempt to edit the reply
+            void await interaction.editReply(payload);
+
+         else // attempt to follow-up (ephemerally)
+            void await interaction.reply(payload);
+
+      } finally { // this *could* have a chance of throwing an error (user deleting message, guild deleted..)
+         noop;
+      };
+   };
+
+
+   /**
     * check if a user has seen this notification 📋
     * @param {import("discord.js").User} user this user to check 👤
-    * @param {"alert" | "offline-soon"} firestoreCollectionName the type of notification to check if this user has seen 📣
+    * @param {"alert" | "offline-soon"} firestoreCollectionName type of notification to check if this user has seen 📣
     */
    async hasSeenNotification(user, firestoreCollectionName) {
       // firestore
@@ -467,7 +473,7 @@ module.exports = class Client {
    /**
     * set that a user has seen a notification 📋
     * @param {import("discord.js").User} user this user to set 👤
-    * @param {"alert" | "offline-soon"} firestoreCollectionName the type of notification to set that this user has seen 📣
+    * @param {"alert" | "offline-soon"} firestoreCollectionName type of notification to set that this user has seen 📣
     */
    async setSeenNotification(user, firestoreCollectionName) {
       // firestore

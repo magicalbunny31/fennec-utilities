@@ -16,7 +16,7 @@ export type InteractionType = `autocomplete` | `button` | `chat-input` | `messag
 
 
 export type InteractionData = {
-   id: Snowflake;
+   id:   Snowflake;
    type: InteractionType;
    name: string;
 };
@@ -24,17 +24,18 @@ export type InteractionData = {
 
 export type FennecFirestore = {
    clientEmail: string;
-   privateKey: string;
-   projectId: string;
+   privateKey:  string;
+   projectId:   string;
 };
 
 
 export type ClientData = {
-   avatarURL: string;
-   colour: ColorResolvable;
+   avatarURL:     string;
+   colour:        ColorResolvable;
    formattedName: string;
-   firestore: FennecFirestore;
-   id: Snowflake;
-   threadId: Snowflake;
-   webhook: WebhookClientData;
+   firestore:     FennecFirestore;
+   id:            Snowflake;
+   supportGuild:  string;
+   threadId:      Snowflake;
+   webhook:       WebhookClientData;
 };

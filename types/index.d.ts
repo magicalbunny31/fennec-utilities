@@ -4,17 +4,18 @@ import { ClientData, FennecFirestore, InteractionData, Status } from "./Data";
 
 
 // types
-interface Alert {
+interface Notification {
    "content":    string;
-   "expires-at": import("@google-cloud/firestore").Timestamp;
    "created-at": import("@google-cloud/firestore").Timestamp;
+   "expires-at": import("@google-cloud/firestore").Timestamp;
 };
 
-type NotificationAlert        =      Alert;
-type NotificationAnnouncement = Omit<Alert, "expires-at">;
-type NotificationOfflineSoon  = Omit<Alert, "expires-at">;
+type NotificationAlert        =      Notification;
+type NotificationAnnouncement = Omit<Notification, "expires-at">;
+type NotificationMaintenance  = Omit<Notification, "expires-at">;
+type NotificationOfflineSoon  = Omit<Notification, "expires-at">;
 
-type NotificationType = "alert" | "announcement" | "offline-soon";
+type NotificationType = "alert" | "announcement" | "maintenance" | "offline-soon";
 
 type NotificationReturnType<T> =
    T extends "alert"        ? NotificationAlert        :
@@ -82,48 +83,36 @@ export class Client {
    public updater(discord: import("discord.js").Client): Promise<void>;
 
    /**
-    * follow-up to an interaction, warning that this bot will go offline soon to the user ⚠️
-    * @param interaction the interaction to respond to 💬
-    */
-   public async warnOfflineSoon(interaction: import("discord.js").Interaction): Promise<void>;
-
-   /**
-    * respond to an interaction, saying that this bot is currently in maintenance to the user 🔧
-    * @param interaction the interaction to respond to 💬
-    */
-   public async warnMaintenance(interaction: import("discord.js").Interaction): Promise<void>;
-
-   /**
     * get the global blacklist 📃
     */
    public async getGlobalBlacklist(): Promise<import("discord.js").Snowflake[]>
 
    /**
-    * respond to an interaction, saying that this user is on the global blacklist 🚫
-    * @param interaction the interaction to respond to 💬
-    * @param supportGuild the support guild for the user to go, in case they want to dispute this 💭
-    */
-   public async warnBlacklisted(interaction: import("discord.js").Interaction, supportGuild: string): Promise<void>;
-
-   /**
     * get the current notification for this application 📰
-    * @param type the type of notification to get 📣
+    * @param type type of notification to get 📣
     */
    public async getNotification<T extends NotificationType>(type: NotificationType): Promise<NotificationReturnType<T>>?;
 
    /**
+    * notify a user of a notification 📰
+    * @param interaction the interaction to respond to 💬
+    * @param type type of notification 📣
+    */
+   public async notify(interaction: import("discord.js").Interaction, type: "alert" | "blacklist" | "maintenance" | "offline-soon"): Promise<void>;
+
+   /**
     * check if a user has seen this notification 📋
     * @param user this user to check 👤
-    * @param firestoreCollectionName the type of notification to check if this user has seen 📣
+    * @param firestoreCollectionName type of notification to check if this user has seen 📣
     */
    public async hasSeenNotification(user: import("discord.js").User, firestoreCollectionName: "alert" | "offline-soon"): Promise<boolean>;
 
    /**
     * set that a user has seen a notification 📋
     * @param user this user to set 👤
-    * @param firestoreCollectionName the type of notification to set that this user has seen 📣
+    * @param firestoreCollectionName type of notification to set that this user has seen 📣
     */
-   public async setSeenNotification(user: import("discord.js").User, firestoreCollectionName: "alert" | "offline-soon"): Promise<void>
+   public async setSeenNotification(user: import("discord.js").User, firestoreCollectionName: "alert" | "offline-soon"): Promise<void>;
 };
 
 
