@@ -383,8 +383,8 @@ module.exports = class Client {
                      .setDescription(strip`
                         ${notification.content}
    
-                        > - \`STARTED\` ${Discord.time(notification[`created-at`].seconds, Discord.TimestampStyles.RelativeTime)} ${Discord.time(notification[`created-at`].seconds)}
-                        > - \`ENDS   \` ${Discord.time(notification[`expires-at`].seconds, Discord.TimestampStyles.RelativeTime)} ${Discord.time(notification[`expires-at`].seconds)}
+                        > - \`STARTED\` ${Discord.time(notification[`created-at`].seconds, Discord.TimestampStyles.RelativeTime)} (${Discord.time(notification[`created-at`].seconds)})
+                        > - \`ENDS   \` ${Discord.time(notification[`expires-at`].seconds, Discord.TimestampStyles.RelativeTime)} (${Discord.time(notification[`expires-at`].seconds)})
                      `)
                ],
                ephemeral: true
@@ -399,7 +399,7 @@ module.exports = class Client {
                         "${notification.content}"
                         ~ the devs ${emojis.happ}
    
-                        > - \`STARTED\` ${Discord.time(notification[`created-at`].seconds, Discord.TimestampStyles.RelativeTime)} ${Discord.time(notification[`created-at`].seconds)}
+                        > - \`STARTED\` ${Discord.time(notification[`created-at`].seconds, Discord.TimestampStyles.RelativeTime)} (${Discord.time(notification[`created-at`].seconds)})
                      `)
                ],
                ephemeral: true
@@ -414,7 +414,7 @@ module.exports = class Client {
                         "${notification.content}"
                         ~ the devs ${emojis.happ}
    
-                        > - \`STARTED\` ${Discord.time(notification[`created-at`].seconds, Discord.TimestampStyles.RelativeTime)} ${Discord.time(notification[`created-at`].seconds)}
+                        > - \`STARTED\` ${Discord.time(notification[`created-at`].seconds, Discord.TimestampStyles.RelativeTime)} (${Discord.time(notification[`created-at`].seconds)})
                      `)
                ]
             };
