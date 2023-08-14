@@ -18,6 +18,7 @@ export class Client {
    public colour:        import("discord.js").ColorResolvable;
    public formattedName: string;
    public id:            import("discord.js").Snowflake;
+   public supportGuild:  string;
    public threadId:      import("discord.js").Snowflake;
 
    /**
