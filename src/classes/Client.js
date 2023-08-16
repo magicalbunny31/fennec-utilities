@@ -216,7 +216,7 @@ module.exports = class Client {
       const statsDocSnap = await statsDocRef.get();
       const statsDocData = statsDocSnap.data() || {};
 
-      const status = statsDocData.name;
+      const status = statsDocData.status.name;
       return status;
    };
 
