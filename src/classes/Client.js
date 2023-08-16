@@ -463,7 +463,7 @@ module.exports = class Client {
       const currentTimestamp      = Math.floor(Date.now() / 1000);
       const notificationExpiresAt = notificationsDocData.delete?.seconds;
       if (notificationExpiresAt && notificationExpiresAt < currentTimestamp)
-         return false;
+         return true;
 
       // if there's an entry for this user, they've seen this notification
       return user.id in notificationsDocData;
@@ -487,7 +487,7 @@ module.exports = class Client {
       const currentTimestamp      = Math.floor(Date.now() / 1000);
       const notificationExpiresAt = notification[`expires-at`]?.seconds;
       if (notificationExpiresAt && notificationExpiresAt < currentTimestamp)
-         return false;
+         return;
 
       // payload for the database
       const payload = {
