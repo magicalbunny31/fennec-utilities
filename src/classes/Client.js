@@ -293,10 +293,10 @@ module.exports = class Client {
 
 
    /**
-    * update this bot's usage every 10 or so minutes ⏱️
-    * @param {import("discord.js").Client} discord discord client for this bot 🗃️
+    * update this application's usage every 10 or so minutes ⏱️
+    * @param {() => Promise<number>} guildCountFunc function to get the guild count for this application 🗃️
     */
-   updater(discord) {
+   updater(guildCountFunc) {
       // run every 10 minutes
       setInterval(async () => {
          // wait from 5 seconds to 5 minutes, to prevent other clients from sending requests at the same time
@@ -305,7 +305,7 @@ module.exports = class Client {
 
          try {
             // get guild count
-            const guildCount = discord.guilds.cache.size;
+            const guildCount = await guildCountFunc();
 
             // send client updates
             await this.updateUsage(guildCount);
