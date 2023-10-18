@@ -350,6 +350,14 @@ module.exports = class Client {
 
       // notification
       const notification = statsDocData[type];
+
+      // this notification has expired
+      const currentTimestamp      = Math.floor(Date.now() / 1000);
+      const notificationExpiresAt = notification[`expires-at`]?.seconds;
+      if (notificationExpiresAt < currentTimestamp)
+         return null;
+
+      // return the notification
       return notification;
    };
 
