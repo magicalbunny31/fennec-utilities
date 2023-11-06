@@ -108,8 +108,9 @@ module.exports = class Client {
    /**
     * responds to an interaction, showing an error to the user 🗯️
     * @param {import("discord.js").Interaction} interaction the interaction to respond to 💬
+    * @param {Error} [error] error to show to the user 📋
     */
-   async respondToInteractionWithError(interaction) {
+   async respondToInteractionWithError(interaction, error) {
       const type = (() => {
          switch (true) {
             case interaction.isAnySelectMenu?.():             return `select menu`;
@@ -212,6 +213,35 @@ module.exports = class Client {
             noop;
          };
       };
+
+      // follow-up with the error log
+      if (error)
+         try {
+            // attempt to follow-up ephemerally
+            await interaction.followUp({
+               content: strip`
+                  ### ${emojis.context_menu_command} attached is the error log
+                  > - don't worry: the developers have received a copy of this too~
+                  > - wanna learn more about this error? feel free to send this in the [support server](${this.supportGuild})!
+                  >  - ${this.supportGuild}
+               `,
+               files: [
+                  new Discord.AttachmentBuilder()
+                     .setFile(
+                        Buffer.from(error.stack)
+                     )
+                     .setName(`error.log`)
+               ],
+               flags: [
+                  Discord.MessageFlags.SuppressEmbeds,
+                  Discord.MessageFlags.SuppressNotifications
+               ]
+            });
+
+         } catch {
+            // this *could* have a chance of throwing an error (channel/guild deleted..)
+            noop;
+         };
 
       return;
    };
