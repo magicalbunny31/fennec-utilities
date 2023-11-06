@@ -36,26 +36,26 @@ export class Client {
    public async respondToInteractionWithError(interaction: import("discord.js").Interaction): Promise<void>;
 
    /**
-    * get this bot's currently set status 📛
+    * get this application's currently set status 📛
     */
    public async getStatus(): Promise<Status>;
 
    /**
-    * update this bot's status 💭
-    * @param status this bot's status 🏷️
-    * @param reason why this bot's status is changing ❓
+    * update this application's status 💭
+    * @param status this application's status 🏷️
+    * @param reason why this application's status is changing ❓
     */
    public async updateStatus(status: Status, reason?: string): Promise<void>;
 
    /**
-    * update this bot's usage 🤖
-    * @param {number} guildCount this bot's guild count 📂
+    * update this application's usage 🤖
+    * @param {number} guildCount this application's guild count 📂
     */
    public async updateUsage(guildCount: number): Promise<void>;
 
    /**
-    * update this bot's usage every 10 or so minutes ⏱️
-    * @param discord discord client for this bot 🗃️
+    * update this application's usage every 10 or so minutes ⏱️
+    * @param discord discord client for this application 🗃️
     */
    public updater(discord: import("discord.js").Client): Promise<void>;
 

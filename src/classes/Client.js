@@ -209,7 +209,7 @@ module.exports = class Client {
 
 
    /**
-    * get this bot's currently set status 📛
+    * get this application's currently set status 📛
     */
    async getStatus() {
       const statsDocRef  = this.#firestore.collection(`stats`).doc(this.id);
@@ -222,9 +222,9 @@ module.exports = class Client {
 
 
    /**
-    * update this bot's status 💭
-    * @param {import("@types/Data").Status} status this bot's status 🏷️
-    * @param {string} [reason] why this bot's status is changing ❓
+    * update this application's status 💭
+    * @param {import("@types/Data").Status} status this application's status 🏷️
+    * @param {string} [reason] why this application's status is changing ❓
     */
    async updateStatus(status, reason) {
       void await this.#sendMessage({
@@ -236,8 +236,8 @@ module.exports = class Client {
 
 
    /**
-    * update this bot's usage 🤖
-    * @param {number} guildCount this bot's guild count 📂
+    * update this application's usage 🤖
+    * @param {number} guildCount this application's guild count 📂
     */
    async updateUsage(guildCount) {
       const cpu = (() => {
@@ -293,8 +293,8 @@ module.exports = class Client {
 
 
    /**
-    * update this bot's usage every 10 or so minutes ⏱️
-    * @param {import("discord.js").Client} discord discord client for this bot 🗃️
+    * update this application's usage every 10 or so minutes ⏱️
+    * @param {import("discord.js").Client} discord discord client for this application 🗃️
     */
    updater(discord) {
       // run every 10 minutes
