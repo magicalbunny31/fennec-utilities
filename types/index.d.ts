@@ -54,10 +54,10 @@ export class Client {
    public async updateUsage(guildCount: number): Promise<void>;
 
    /**
-    * update this application's usage every 10 or so minutes ⏱️
-    * @param guildCountFunc function to get the guild count for this application 🗃️
+    * update this bot's usage every 10 or so minutes ⏱️
+    * @param discord discord client for this bot 🗃️
     */
-   public updater(discord: () => Promise<number>): Promise<void>;
+   public updater(discord: import("discord.js").Client): Promise<void>;
 
    /**
     * get the global blacklist 📃
