@@ -165,7 +165,16 @@ module.exports = class Client {
          `${emojis.furdancing} out partying~`,
          `${emojis.mhn} i can fix it!`,
          `${emojis.pout} awh, well damn!`,
-         `${emojis.shrug} muh`
+         `${emojis.shrug} muh`,
+         `${emojis.why} why did this happen?!`,
+         `${emojis.concern} \\*mentally distraught\\*`,
+         `${emojis.haha_uhh} well, this is awkward..`,
+         `${emojis.stretch} *i'll do something later..*`,
+         `${emojis.beg} d-don't tell anyone you saw this, o-okai?..`,
+         `${emojis.boop} \\*boop\\*`,
+         `${emojis.pout} guh`,
+         `${emojis.eepy} code is eepy just like i am zzz`,
+         `${emojis.shy} xwx`
       ]);
 
       const embeds = [
