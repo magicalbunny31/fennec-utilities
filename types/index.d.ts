@@ -32,8 +32,9 @@ export class Client {
    /**
     * responds to an interaction, showing an error to the user 🗯️
     * @param interaction the interaction to respond to 💬
+    * @param error error to show to the user 📋
     */
-   public async respondToInteractionWithError(interaction: import("discord.js").Interaction): Promise<void>;
+   public async respondToInteractionWithError(interaction: import("discord.js").Interaction, error?: Error): Promise<void>;
 
    /**
     * get this application's currently set status 📛
