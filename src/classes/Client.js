@@ -235,7 +235,8 @@ module.exports = class Client {
                flags: [
                   Discord.MessageFlags.SuppressEmbeds,
                   Discord.MessageFlags.SuppressNotifications
-               ]
+               ],
+               ephemeral: true
             });
 
          } catch {
