@@ -1,4 +1,4 @@
-import { ClientData, FennecFirestore, InteractionData, PostSettings, Status } from "./Data";
+import { ClientData, FennecFirestore, InteractionData, PostSettings, Status, StatusName } from "./Data";
 import { NotificationReturnType, NotificationType } from "./Notification";
 
 
@@ -32,6 +32,13 @@ export class Client {
     * get this application's currently set status 📛
     */
    public async getStatus(): Promise<Status?>;
+
+   /**
+    * update this application's status 💭
+    * @param name this application's status 🏷️
+    * @param message why this application's status is changing ❓
+    */
+   public async updateStatus(name: StatusName, message?: string): Promise<void>;
 
    /**
     * get the global blacklist 📃

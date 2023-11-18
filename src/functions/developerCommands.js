@@ -321,7 +321,7 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
          };
 
          // change status, it's that easy!
-         fennec.updateStatus(status, reason);
+         await fennec.updateStatus(status, [ `offline-soon`, `maintenance` ].includes(status) ? reason : null);
 
          // react to the message
          await message.react(emojis.yes);

@@ -271,6 +271,33 @@ module.exports = class Client {
 
 
    /**
+    * update this application's status 💭
+    * @param {"maintenance" | "offline-soon" | "online"} name this application's status 🏷️
+    * @param {string} message why this application's status is changing ❓
+    */
+   async updateStatus(name, message) {
+      const applicationStatusDocRef  = this.#firestore.firestore.collection(`application-status`).doc(this.#firestore.documentName);
+      const applicationStatusDocSnap = await applicationStatusDocRef.get();
+
+      const payload = {
+         "application-statistics.status": {
+            message,
+            name,
+            timestamp: new Timestamp(
+               Math.floor(Date.now() / 1000),
+               0
+            )
+         }
+      };
+
+      if (applicationStatusDocSnap.exists)
+         await applicationStatusDocRef.update(payload);
+      else
+         await applicationStatusDocRef.create(payload);
+   };
+
+
+   /**
     * get the global blacklist 📃
     */
    async getGlobalBlacklist() {
