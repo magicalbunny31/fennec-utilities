@@ -1,15 +1,18 @@
+import { Status } from "./Data";
+import { Timestamp } from "@google-cloud/firestore";
+
 interface Notification {
    "content":    string;
-   "created-at": import("@google-cloud/firestore").Timestamp;
-   "expires-at": import("@google-cloud/firestore").Timestamp;
+   "created-at": Timestamp;
+   "expires-at": Timestamp;
 };
 
 type NotificationAlert        =      Notification;
 type NotificationAnnouncement = Omit<Notification, "expires-at">;
-type NotificationMaintenance  = Omit<Notification, "expires-at">;
-type NotificationOfflineSoon  = Omit<Notification, "expires-at">;
+type NotificationMaintenance  = Status;
+type NotificationOfflineSoon  = Status;
 
-export type NotificationType = "alert" | "announcement" | "blacklist" | "maintenance" | "offline-soon";
+export type NotificationType = "alert" | "announcement" | "maintenance" | "offline-soon";
 
 export type NotificationReturnType<T> =
    T extends "alert"        ? NotificationAlert        :

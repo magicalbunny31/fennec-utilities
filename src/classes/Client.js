@@ -1,11 +1,9 @@
 const Discord = require("discord.js");
 const { Firestore, Timestamp } = require("@google-cloud/firestore");
-const { colours, emojis, choice, noop, number, strip, wait } = require("@magicalbunny31/awesome-utility-stuff");
-const os = require("os");
+const { colours, emojis, choice, noop, strip } = require("@magicalbunny31/awesome-utility-stuff");
 
 
 module.exports = class Client {
-   #webhook;
    #firestore;
 
 
@@ -14,45 +12,23 @@ module.exports = class Client {
     * @param {import("@types/Data").ClientData} options options for this client 🎛️
     */
    constructor(options) {
-      // discord
-      this.#webhook = new Discord.WebhookClient(options.webhook);
-
       // firestore
-      this.#firestore = new Firestore({
-         credentials: {
-            client_email: options.firestore.clientEmail,
-            private_key:  options.firestore.privateKey
-         },
-         projectId: options.firestore.projectId
-      });
+      this.#firestore = {
+         documentName: options.firestore.documentName,
+         firestore: new Firestore({
+            credentials: {
+               client_email: options.firestore.clientEmail,
+               private_key:  options.firestore.privateKey
+            },
+            projectId: options.firestore.projectId
+         })
+      };
 
-      // thread's starter message
-      this.threadId      = options.threadId;
-      this.formattedName = options.formattedName;
-      this.id            = options.id;
-      this.avatarURL     = options.avatarURL;
-      this.colour        = options.colour;
+      // post settings
+      this.postSettings = options.postSettings;
 
       // other
       this.supportGuild = options.supportGuild;
-   };
-
-
-   async #sendMessage(payload) {
-      const json = JSON.stringify({
-         ...payload,
-         starterMessage: {
-            formattedName: this.formattedName,
-            id: this.id,
-            avatarURL: this.avatarURL,
-            colour: this.colour
-         }
-      });
-
-      void await this.#webhook.send({
-         threadId: this.threadId,
-         content: Discord.codeBlock(`js`, json)
-      });
    };
 
 
@@ -86,21 +62,36 @@ module.exports = class Client {
          };
       })();
 
-      void await this.#sendMessage({
-         type: `error`,
-         error: {
-            message: error.message,
-            stack: error.stack,
-            name: error.name
-         },
-         timestamp,
-         interaction: type
-            ? {
-               id: interactionOrSource.id,
-               name,
-               type
-            }
-            : `${interactionOrSource}`
+      await this.#firestore.firestore.runTransaction(async transaction => {
+         const applicationStatusDocRef  = this.#firestore.firestore.collection(`application-status`).doc(this.#firestore.documentName);
+         const applicationStatusDocSnap = await applicationStatusDocRef.get();
+         const applicationStatusDocData = applicationStatusDocSnap.data() || {};
+
+         const payload = {
+            "errors.post": [
+               ...(applicationStatusDocData.errors?.post || []),
+               {
+                  error: {
+                     message: error.message,
+                     stack: error.stack,
+                     name: error.name
+                  },
+                  interaction: type
+                     ? {
+                        id: interactionOrSource.id,
+                        name,
+                        type
+                     }
+                     : `${interactionOrSource}`,
+                  timestamp
+               }
+            ]
+         };
+
+         if (applicationStatusDocSnap.exists)
+            transaction.update(applicationStatusDocRef, payload);
+         else
+            transaction.create(applicationStatusDocRef, payload);
       });
    };
 
@@ -252,109 +243,12 @@ module.exports = class Client {
     * get this application's currently set status 📛
     */
    async getStatus() {
-      const statsDocRef  = this.#firestore.collection(`stats`).doc(this.id);
-      const statsDocSnap = await statsDocRef.get();
-      const statsDocData = statsDocSnap.data() || {};
+      const applicationStatusDocRef  = this.#firestore.firestore.collection(`application-status`).doc(this.#firestore.documentName);
+      const applicationStatusDocSnap = await applicationStatusDocRef.get();
+      const applicationStatusDocData = applicationStatusDocSnap.data() || {};
 
-      const status = statsDocData.status.name;
+      const status = applicationStatusDocData[`application-statistics`]?.status;
       return status;
-   };
-
-
-   /**
-    * update this application's status 💭
-    * @param {import("@types/Data").Status} status this application's status 🏷️
-    * @param {string} [reason] why this application's status is changing ❓
-    */
-   async updateStatus(status, reason) {
-      void await this.#sendMessage({
-         type: `update`,
-         status,
-         reason
-      });
-   };
-
-
-   /**
-    * update this application's usage 🤖
-    * @param {number} guildCount this application's guild count 📂
-    */
-   async updateUsage(guildCount) {
-      const cpu = (() => {
-         const [ cpu ] = os.cpus();
-
-         const total = Object
-            .values(cpu.times)
-            .reduce((accumulator, timeValue) => accumulator + timeValue, 0);
-
-         const usage = process.cpuUsage();
-         const currentCpuUsage = (usage.user + usage.system) / 1000;
-
-         const cpuPercentage = currentCpuUsage / total * 100;
-         return Math.round(cpuPercentage * 100) / 100;
-      })();
-
-      const memory = (() => {
-         const toHuman = bytes => {
-            if (Math.abs(bytes) < 1000)
-               return `${bytes} B`;
-
-            const units = [ `KB`, `MB`, `GB` ];
-
-            let unit = -1;
-            const remainder = 10;
-
-            do {
-               bytes /= 1000;
-               unit ++;
-
-            } while (
-               Math.round(Math.abs(bytes) * remainder) / remainder >= 1000
-               && unit < units.length - 1
-            );
-
-            return `${bytes.toFixed(1)} ${units[unit]}`;
-         };
-
-         const { heapUsed, heapTotal } = process.memoryUsage();
-         return {
-            heapUsed: toHuman(heapUsed),
-            heapTotal: toHuman(heapTotal)
-         };
-      })();
-
-      void await this.#sendMessage({
-         type: `update`,
-         cpu,
-         memory,
-         guildCount
-      });
-   };
-
-
-   /**
-    * update this application's usage every 10 or so minutes ⏱️
-    * @param {import("discord.js").Client} discord discord client for this application 🗃️
-    */
-   updater(discord) {
-      // run every 10 minutes
-      setInterval(async () => {
-         // wait from 5 seconds to 5 minutes, to prevent other clients from sending requests at the same time
-         const timeToWait = number(1_000 * 5, 1_000 * 5 * 60);
-         await wait(timeToWait);
-
-         try {
-            // get guild count
-            const guildCount = (await discord.application.fetch()).approximateGuildCount;
-
-            // send client updates
-            await this.updateUsage(guildCount);
-
-         } catch (error) {
-            // well that was awkward, an error occurred
-            return console.error(error.stack);
-         };
-      }, 1_000 * 10 * 60);
    };
 
 
@@ -362,7 +256,7 @@ module.exports = class Client {
     * get the global blacklist 📃
     */
    async getGlobalBlacklist() {
-      const blacklistDocRef  = this.#firestore.collection(`blacklist`).doc(`users`);
+      const blacklistDocRef  = this.#firestore.firestore.collection(`blacklist`).doc(`users`);
       const blacklistDocSnap = await blacklistDocRef.get();
       const blacklistDocData = blacklistDocSnap.data() || {};
 
@@ -377,19 +271,16 @@ module.exports = class Client {
     */
    async getNotification(type) {
       // firestore
-      const statsDocRef  = this.#firestore.collection(`stats`).doc(this.id);
-      const statsDocSnap = await statsDocRef.get();
-      const statsDocData = statsDocSnap.data() || {};
+      const applicationStatusDocRef  = this.#firestore.firestore.collection(`application-status`).doc(this.#firestore.documentName);
+      const applicationStatusDocSnap = await applicationStatusDocRef.get();
+      const applicationStatusDocData = applicationStatusDocSnap.data() || {};
 
       // this is a status
       if ([ `maintenance`, `offline-soon` ].includes(type))
-         return {
-            "content":    statsDocData.status.reason,
-            "created-at": statsDocData.status.at
-         };
+         return applicationStatusDocData[`application-statistics`]?.status;
 
       // notification
-      const notification = statsDocData[type];
+      const notification = applicationStatusDocData[type] || {};
 
       // this notification has expired
       const currentTimestamp      = Math.floor(Date.now() / 1000);
@@ -408,7 +299,7 @@ module.exports = class Client {
     * @param {"alert" | "blacklist" | "maintenance" | "offline-soon"} type type of notification 📣
     */
    async notify(interaction, type) {
-      // what to do for thus type
+      // what to do for this type
       const blockInteraction = [ `blacklist`, `maintenance` ].includes(type);
 
       // defer the interaction
@@ -429,7 +320,7 @@ module.exports = class Client {
                      .setColor(this.colour)
                      .setTitle(`${emojis.oi} new alert!`)
                      .setDescription(strip`
-                        ${notification.content}
+                        ${notification.message}
    
                         > - \`STARTED\` ${Discord.time(notification[`created-at`].seconds, Discord.TimestampStyles.RelativeTime)} (${Discord.time(notification[`created-at`].seconds)})
                         > - \`ENDS   \` ${Discord.time(notification[`expires-at`].seconds, Discord.TimestampStyles.RelativeTime)} (${Discord.time(notification[`expires-at`].seconds)})
@@ -442,12 +333,12 @@ module.exports = class Client {
                embeds: [
                   new Discord.EmbedBuilder()
                      .setColor(colours.orange)
-                     .setTitle(`${emojis.shhh} i'll be offline soon~`)
+                     .setTitle(`${emojis.message} i'll be offline soon~`)
                      .setDescription(strip`
-                        "${notification.content}"
+                        "${notification.message}"
                         ~ the devs ${emojis.happ}
    
-                        > - \`STARTED\` ${Discord.time(notification[`created-at`].seconds, Discord.TimestampStyles.RelativeTime)} (${Discord.time(notification[`created-at`].seconds)})
+                        > - \`STARTED\` ${Discord.time(notification.timestamp.seconds, Discord.TimestampStyles.RelativeTime)} (${Discord.time(notification.timestamp.seconds)})
                      `)
                ],
                ephemeral: true
@@ -459,10 +350,10 @@ module.exports = class Client {
                      .setColor(colours.red)
                      .setTitle(`${emojis.stop} offline for maintenance~`)
                      .setDescription(strip`
-                        "${notification.content}"
+                        "${notification.message}"
                         ~ the devs ${emojis.happ}
    
-                        > - \`STARTED\` ${Discord.time(notification[`created-at`].seconds, Discord.TimestampStyles.RelativeTime)} (${Discord.time(notification[`created-at`].seconds)})
+                        > - \`STARTED\` ${Discord.time(notification.timestamp.seconds, Discord.TimestampStyles.RelativeTime)} (${Discord.time(notification.timestamp.seconds)})
                      `)
                ]
             };
@@ -485,10 +376,10 @@ module.exports = class Client {
 
       try {
          if (blockInteraction) // attempt to edit the reply
-            void await interaction.editReply(payload);
+            await interaction.editReply(payload);
 
          else // attempt to follow-up (ephemerally)
-            void await interaction.followUp(payload);
+            await interaction.followUp(payload);
 
       } finally { // this *could* have a chance of throwing an error (user deleting message, guild deleted..)
          noop;
@@ -503,7 +394,7 @@ module.exports = class Client {
     */
    async hasSeenNotification(user, type) {
       // firestore
-      const notificationsDocRef  = this.#firestore.collection(`${type}-notifications`).doc(this.id);
+      const notificationsDocRef  = this.#firestore.firestore.collection(`${type}-notifications`).doc(this.#firestore.documentName);
       const notificationsDocSnap = await notificationsDocRef.get();
       const notificationsDocData = notificationsDocSnap.data() || {};
 
@@ -525,7 +416,7 @@ module.exports = class Client {
     */
    async setSeenNotification(user, type) {
       // firestore
-      const notificationsDocRef  = this.#firestore.collection(`${type}-notifications`).doc(this.id);
+      const notificationsDocRef  = this.#firestore.firestore.collection(`${type}-notifications`).doc(this.#firestore.documentName);
       const notificationsDocSnap = await notificationsDocRef.get();
 
       // this notification
@@ -544,9 +435,9 @@ module.exports = class Client {
 
       // set the notification
       if (!notificationsDocSnap.exists)
-         void await notificationsDocRef.set(payload);
+         await notificationsDocRef.set(payload);
       else
-         void await notificationsDocRef.update(payload);
+         await notificationsDocRef.update(payload);
    };
 
 

@@ -1,4 +1,4 @@
-import { ClientData, FennecFirestore, InteractionData, Status } from "./Data";
+import { ClientData, FennecFirestore, InteractionData, PostSettings, Status } from "./Data";
 import { NotificationReturnType, NotificationType } from "./Notification";
 
 
@@ -9,17 +9,9 @@ export class Client {
     */
    constructor(options: ClientData);
 
-   private webhook:   import("discord.js").WebhookClientData;
-   private firestore: FennecFirestore;
-
-   private async sendMessage(payload: Object): Promise<void>; // send a message to the webhook, for fennec to respond to
-
-   public avatarURL:     string;
-   public colour:        import("discord.js").ColorResolvable;
-   public formattedName: string;
-   public id:            import("discord.js").Snowflake;
-   public supportGuild:  string;
-   public threadId:      import("discord.js").Snowflake;
+   private firestore:    FennecFirestore;
+   public  postSettings: PostSettings
+   public  supportGuild: string;
 
    /**
     * send an error ❗
@@ -39,26 +31,7 @@ export class Client {
    /**
     * get this application's currently set status 📛
     */
-   public async getStatus(): Promise<Status>;
-
-   /**
-    * update this application's status 💭
-    * @param status this application's status 🏷️
-    * @param reason why this application's status is changing ❓
-    */
-   public async updateStatus(status: Status, reason?: string): Promise<void>;
-
-   /**
-    * update this application's usage 🤖
-    * @param {number} guildCount this application's guild count 📂
-    */
-   public async updateUsage(guildCount: number): Promise<void>;
-
-   /**
-    * update this application's usage every 10 or so minutes ⏱️
-    * @param discord discord client for this application 🗃️
-    */
-   public updater(discord: import("discord.js").Client): Promise<void>;
+   public async getStatus(): Promise<Status?>;
 
    /**
     * get the global blacklist 📃
@@ -69,7 +42,7 @@ export class Client {
     * get the current notification for this application 📰
     * @param type type of notification to get 📣
     */
-   public async getNotification<T extends NotificationType>(type: "alert" | "announcement" | "maintenance" | "offline-soon"): Promise<NotificationReturnType<T>>?;
+   public async getNotification<T extends NotificationType>(type: "alert" | "announcement" | "maintenance" | "offline-soon"): Promise<NotificationReturnType<T>?>;
 
    /**
     * notify a user of a notification 📰

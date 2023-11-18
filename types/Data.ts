@@ -1,4 +1,5 @@
-import { ColorResolvable, Snowflake, WebhookClientData } from "discord.js";
+import { ColorResolvable, Snowflake } from "discord.js";
+import { Timestamp } from "@google-cloud/firestore";
 
 
 /**
@@ -6,14 +7,16 @@ import { ColorResolvable, Snowflake, WebhookClientData } from "discord.js";
  * offline soon : will go offline soon
  * maintenance  : "offline", fennec will take over
  */
-export type Status = "online" | "offline-soon" | "maintenance";
+export type StatusName = "online" | "offline-soon" | "maintenance";
 
-
-export type Type = "update" | "error";
+export type Status = {
+   message:   string;
+   name:      StatusName;
+   timestamp: Timestamp;
+};
 
 
 export type InteractionType = `autocomplete` | `button` | `chat-input` | `message-context-menu` | `modal-submit` | `select-menu` | `user-context-menu` | `unknown`;
-
 
 export type InteractionData = {
    id:   Snowflake;
@@ -23,19 +26,21 @@ export type InteractionData = {
 
 
 export type FennecFirestore = {
-   clientEmail: string;
-   privateKey:  string;
-   projectId:   string;
+   clientEmail:  string;
+   documentName: string;
+   privateKey:   string;
+   projectId:    string;
 };
 
+export type PostSettings = {
+   displayedAvatar: string;
+   displayedName:   string;
+   embedColour:     ColorResolvable;
+   threadId:        Snowflake;
+};
 
 export type ClientData = {
-   avatarURL:     string;
-   colour:        ColorResolvable;
-   formattedName: string;
-   firestore:     FennecFirestore;
-   id:            Snowflake;
-   supportGuild:  string;
-   threadId:      Snowflake;
-   webhook:       WebhookClientData;
+   firestore:    FennecFirestore;
+   postSettings: PostSettings;
+   supportGuild: string;
 };
