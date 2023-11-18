@@ -103,8 +103,8 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
                embeds: [
                   developerCommandsEmbed
                      .setDescription(strip`
-                        ${emojis.no} **no code to evaluate!**
-                        > input something maybe~ ${emojis.mhn}
+                        ### ${emojis.no} no code to evaluate!
+                        > - input something maybe~ ${emojis.mhn}
                      `)
                ],
                files: developerCommandsFiles,
@@ -122,8 +122,8 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
                embeds: [
                   developerCommandsEmbed
                      .setDescription(strip`
-                        ${emojis.no} **can't evaluate this code..**
-                        > a blacklisted word was found ${emojis.rip}
+                        ### ${emojis.no} can't evaluate this code..
+                        > - a blacklisted word was found ${emojis.rip}
                      `)
                ],
                files: developerCommandsFiles,
@@ -286,8 +286,8 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
                embeds: [
                   developerCommandsEmbed
                      .setDescription(strip`
-                        ${emojis.no} **\`${status}\` isn't a valid status..**
-                        > it must be one of: \`online\` | \`offline soon\` | \`maintenance\` ${emojis.mhn}
+                        ### ${emojis.no} \`${status}\` isn't a valid status..
+                        > - it must be one of: \`online\` | \`offline soon\` | \`maintenance\` ${emojis.mhn}
                      `)
                ],
                files: developerCommandsFiles,
@@ -306,8 +306,8 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
                embeds: [
                   developerCommandsEmbed
                      .setDescription(strip`
-                        ${emojis.no} **you need to input a reason!**
-                        > for example: why's ${message.client.user}'s status changing to \`${status}\`? ${emojis.mhn}
+                        ### ${emojis.no} you need to input a reason!
+                        > - for example: why's ${message.client.user}'s status changing to \`${status}\`? ${emojis.mhn}
                      `)
                ],
                files: developerCommandsFiles,
@@ -352,9 +352,9 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
                      developerCommandsEmbed
                         .setDescription(
                            items
-                              .map((item, i) => `**\`${i}\`** : ${item}`)
+                              .map((item, i) => `${i}. ${item}`)
                               .join(`\n`)
-                           || `**\`no to-do items..\`** ${emojis.rip}`
+                           || `### ${emojis.rip} no to-do items..`
                         )
                   ],
                   files: developerCommandsFiles,
@@ -378,8 +378,8 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
                      embeds: [
                         developerCommandsEmbed
                            .setDescription(strip`
-                              ${emojis.no} **no item to add!**
-                              > input something maybe~ ${emojis.mhn}
+                              ### ${emojis.no} no item to add!
+                              > - input something maybe~ ${emojis.mhn}
                            `)
                      ],
                      files: developerCommandsFiles,
@@ -402,8 +402,8 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
                   embeds: [
                      developerCommandsEmbed
                         .setDescription(strip`
-                           ${emojis.yes} **added to-do item~**
-                           > view current to-dos with ${message.client.user} **to-do** ${emojis.mhn}
+                           ### ${emojis.yes} added to-do item~
+                           > - view current to-dos with **${emojis.active_threads} ${message.client.user} to-do** ${emojis.mhn}
                         `)
                   ],
                   files: developerCommandsFiles,
@@ -425,8 +425,8 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
                      embeds: [
                         developerCommandsEmbed
                            .setDescription(strip`
-                              ${emojis.no} **\`${args[1]}\` isn't a valid index..**
-                              > it must be an integer ${emojis.mhn}
+                              ### ${emojis.no} \`${args[1]}\` isn't a valid index..
+                              > - it must be an integer ${emojis.mhn}
                            `)
                      ],
                      files: developerCommandsFiles,
@@ -443,8 +443,8 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
                      embeds: [
                         developerCommandsEmbed
                            .setDescription(strip`
-                              ${emojis.no} **to-do index \`${index}\` is out of range..**
-                              > choose a higher number ${emojis.mhn}
+                              ### ${emojis.no} to-do index \`${index}\` is out of range..
+                              > - choose a higher number ${emojis.mhn}
                            `)
                      ],
                      files: developerCommandsFiles,
@@ -461,8 +461,8 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
                      embeds: [
                         developerCommandsEmbed
                            .setDescription(strip`
-                              ${emojis.no} **to-do index \`${index}\` is out of range..**
-                              > choose a lower number ${emojis.mhn}
+                              ### ${emojis.no} to-do index \`${index}\` is out of range..
+                              > - choose a lower number ${emojis.mhn}
                            `)
                      ],
                      files: developerCommandsFiles,
@@ -485,8 +485,8 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
                   embeds: [
                      developerCommandsEmbed
                         .setDescription(strip`
-                           ${emojis.yes} **removed to-do item~**
-                           > view current to-dos with ${message.client.user} **to-do** ${emojis.mhn}
+                           ### ${emojis.yes} removed to-do item~
+                           > - view current to-dos with **${emojis.active_threads} ${message.client.user} to-do** ${emojis.mhn}
                         `)
                   ],
                   files: developerCommandsFiles,
