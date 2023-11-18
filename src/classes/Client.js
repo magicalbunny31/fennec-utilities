@@ -29,6 +29,24 @@ module.exports = class Client {
 
       // other
       this.supportGuild = options.supportGuild;
+
+      // update post settings
+      const applicationStatusDocRef = this.#firestore.firestore.collection(`application-status`).doc(this.#firestore.documentName);
+      applicationStatusDocRef.get()
+         .then(async applicationStatusDocSnap => {
+            const payload = {
+               "post-settings": {
+                  "displayed-avatar": this.postSettings.displayedAvatar,
+                  "displayed-name":   this.postSettings.displayedName,
+                  "embed-colour":     this.postSettings.embedColour,
+                  "thread-id":        this.postSettings.threadId
+               }
+            };
+            if (applicationStatusDocSnap.exists)
+               await applicationStatusDocRef.update(payload);
+            else
+               await applicationStatusDocRef.create(payload);
+         });
    };
 
 
