@@ -4,16 +4,13 @@ const { colours, emojis, choice, noop, strip } = require("@magicalbunny31/awesom
 
 
 module.exports = class Client {
-   #firestore;
-
-
    /**
     * fennec-utilities 🦊
     * @param {import("@types/Data").ClientData} options options for this client 🎛️
     */
    constructor(options) {
       // firestore
-      this.#firestore = {
+      this.firestore = {
          documentName: options.firestore.documentName,
          firestore: new Firestore({
             credentials: {
@@ -31,7 +28,7 @@ module.exports = class Client {
       this.supportGuild = options.supportGuild;
 
       // update post settings
-      const applicationStatusDocRef = this.#firestore.firestore.collection(`application-status`).doc(this.#firestore.documentName);
+      const applicationStatusDocRef = this.firestore.firestore.collection(`application-status`).doc(this.firestore.documentName);
       applicationStatusDocRef.get()
          .then(async applicationStatusDocSnap => {
             const payload = {
@@ -80,8 +77,8 @@ module.exports = class Client {
          };
       })();
 
-      await this.#firestore.firestore.runTransaction(async transaction => {
-         const applicationStatusDocRef  = this.#firestore.firestore.collection(`application-status`).doc(this.#firestore.documentName);
+      await this.firestore.firestore.runTransaction(async transaction => {
+         const applicationStatusDocRef  = this.firestore.firestore.collection(`application-status`).doc(this.firestore.documentName);
          const applicationStatusDocSnap = await applicationStatusDocRef.get();
          const applicationStatusDocData = applicationStatusDocSnap.data() || {};
 
@@ -261,7 +258,7 @@ module.exports = class Client {
     * get this application's currently set status 📛
     */
    async getStatus() {
-      const applicationStatusDocRef  = this.#firestore.firestore.collection(`application-status`).doc(this.#firestore.documentName);
+      const applicationStatusDocRef  = this.firestore.firestore.collection(`application-status`).doc(this.firestore.documentName);
       const applicationStatusDocSnap = await applicationStatusDocRef.get();
       const applicationStatusDocData = applicationStatusDocSnap.data() || {};
 
@@ -276,7 +273,7 @@ module.exports = class Client {
     * @param {string} message why this application's status is changing ❓
     */
    async updateStatus(name, message) {
-      const applicationStatusDocRef  = this.#firestore.firestore.collection(`application-status`).doc(this.#firestore.documentName);
+      const applicationStatusDocRef  = this.firestore.firestore.collection(`application-status`).doc(this.firestore.documentName);
       const applicationStatusDocSnap = await applicationStatusDocRef.get();
 
       const payload = {
@@ -301,7 +298,7 @@ module.exports = class Client {
     * get the global blacklist 📃
     */
    async getGlobalBlacklist() {
-      const blacklistDocRef  = this.#firestore.firestore.collection(`blacklist`).doc(`users`);
+      const blacklistDocRef  = this.firestore.firestore.collection(`blacklist`).doc(`users`);
       const blacklistDocSnap = await blacklistDocRef.get();
       const blacklistDocData = blacklistDocSnap.data() || {};
 
@@ -316,7 +313,7 @@ module.exports = class Client {
     */
    async getNotification(type) {
       // firestore
-      const applicationStatusDocRef  = this.#firestore.firestore.collection(`application-status`).doc(this.#firestore.documentName);
+      const applicationStatusDocRef  = this.firestore.firestore.collection(`application-status`).doc(this.firestore.documentName);
       const applicationStatusDocSnap = await applicationStatusDocRef.get();
       const applicationStatusDocData = applicationStatusDocSnap.data() || {};
 
@@ -439,7 +436,7 @@ module.exports = class Client {
     */
    async hasSeenNotification(user, type) {
       // firestore
-      const notificationsDocRef  = this.#firestore.firestore.collection(`${type}-notifications`).doc(this.#firestore.documentName);
+      const notificationsDocRef  = this.firestore.firestore.collection(`${type}-notifications`).doc(this.firestore.documentName);
       const notificationsDocSnap = await notificationsDocRef.get();
       const notificationsDocData = notificationsDocSnap.data() || {};
 
@@ -461,7 +458,7 @@ module.exports = class Client {
     */
    async setSeenNotification(user, type) {
       // firestore
-      const notificationsDocRef  = this.#firestore.firestore.collection(`${type}-notifications`).doc(this.#firestore.documentName);
+      const notificationsDocRef  = this.firestore.firestore.collection(`${type}-notifications`).doc(this.firestore.documentName);
       const notificationsDocSnap = await notificationsDocRef.get();
 
       // this notification

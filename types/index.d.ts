@@ -1,5 +1,6 @@
 import { ClientData, FennecFirestore, InteractionData, PostSettings, Status, StatusName } from "./Data";
 import { NotificationReturnType, NotificationType } from "./Notification";
+import { Firestore } from "@google-cloud/firestore";
 
 
 export class Client {
@@ -9,9 +10,12 @@ export class Client {
     */
    constructor(options: ClientData);
 
-   private firestore:    FennecFirestore;
-   public  postSettings: PostSettings
-   public  supportGuild: string;
+   public firestore: {
+      documentName: string;
+      firestore:    Firestore;
+   };
+   public postSettings: PostSettings
+   public supportGuild: string;
 
    /**
     * send an error ❗

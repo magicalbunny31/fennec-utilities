@@ -1,8 +1,5 @@
-const path = require("path");
 const Discord = require("discord.js");
-
-const { Firestore } = require("@google-cloud/firestore");
-
+const path = require("path");
 const { colours, emojis, strip } = require("@magicalbunny31/awesome-utility-stuff");
 
 const { name, version } = require("../../package.json");
@@ -12,20 +9,9 @@ const { name, version } = require("../../package.json");
  * @param {Discord.Message} message [discord.js](https://discord.js.org)' message object, found when a [`Message`](https://discord.js.org/#/docs/discord.js/main/class/Message) event is fired from the [`Client`](https://discord.js.org/#/docs/discord.js/main/class/Client) 💬
  * @param {import("../../").Client} fennec this fennec client 🦊
  * @param {Discord.Snowflake[]} developers array of users which can use these commands 🤖
- * @param {import("../../types/Data").FennecFirestore} fennecFirestore credentials for fennec's [`@google-cloud/firestore`](https://cloud.google.com/firestore) 📦
  * @returns {Promise<void>} stuff happens, the function runs. what else do we need to return? 📰
  */
-module.exports = async (message, fennec, developers, fennecFirestore) => {
-   // firestore
-   const firestore = new Firestore({
-      credentials: {
-         client_email: fennecFirestore.clientEmail,
-         private_key: fennecFirestore.privateKey
-      },
-      projectId: fennecFirestore.projectId
-   });
-
-
+module.exports = async (message, fennec, developers) => {
    // ignore bots and webhooks
    if (message.author.bot || message.webhookId)
       return;
@@ -337,7 +323,7 @@ module.exports = async (message, fennec, developers, fennecFirestore) => {
          await message.channel.sendTyping();
 
          // database path for to-dos
-         const database = firestore.collection(`to-do`).doc(fennec.id);
+         const database = fennec.firestore.firestore.collection(`to-do`).doc(fennec.firestore.documentName);
          const docExists = !!(await database.get()).data();
          const { items = [] } = (await database.get()).data() || {};
 
