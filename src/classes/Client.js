@@ -359,7 +359,7 @@ module.exports = class Client {
             case `alert`: return {
                embeds: [
                   new Discord.EmbedBuilder()
-                     .setColor(this.colour)
+                     .setColor(this.postSettings.embedColour)
                      .setTitle(`${emojis.oi} new alert!`)
                      .setDescription(strip`
                         ${notification.message}
