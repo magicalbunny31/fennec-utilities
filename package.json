@@ -1,9 +1,13 @@
 {
    "name": "@magicalbunny31/fennec-utilities",
-   "version": "2.18.3",
-   "description": "utility package for interacting with fennec 💻",
+   "version": "3.0.0",
+   "description": "💻 utility package for interacting with fennec",
    "main": "dist/cjs/index.js",
    "module": "dist/esm/index.js",
+   "scripts": {
+      "test": "node ./tests/index.js",
+      "test-fennec": "node ./tests/fennec.js"
+   },
    "types": "types/index.d.ts",
    "files": [
       "assets",
@@ -22,11 +26,15 @@
    },
    "homepage": "https://github.com/magicalbunny31/fennec-utilities#readme",
    "dependencies": {
-      "@google-cloud/firestore": "^6.8.0",
-      "@magicalbunny31/awesome-utility-stuff": "github:magicalbunny31/awesome-utility-stuff",
-      "discord.js": "^14.15.2"
+      "@magicalbunny31/pawesome-utility-stuffs": "github:magicalbunny31/pawesome-utility-stuffs",
+      "discord.js": "^14.16.3",
+      "set-interval-async": "^3.0.3"
    },
    "engines": {
-      "node": ">=16.11.0"
+      "node": ">=18"
+   },
+   "devDependencies": {
+      "eslint": "^9.12.0",
+      "globals": "^15.10.0"
    }
 }

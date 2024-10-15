@@ -1,8 +1,8 @@
-import Client from "../../src/classes/Client.js";
+import FennecClient from "../../src/classes/FennecClient.js";
 import developerCommands from "../../src/functions/developerCommands.js";
 
 
 export {
-   Client,
+   FennecClient,
    developerCommands
 };

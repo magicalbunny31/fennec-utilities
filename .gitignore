@@ -4,3 +4,6 @@
 
 # 📦 dependencies
 node_modules/
+
+# 🔧 tests
+tests/

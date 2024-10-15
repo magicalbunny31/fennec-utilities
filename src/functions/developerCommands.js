@@ -1,17 +1,10 @@
-const Discord = require("discord.js");
-const path = require("path");
-const { colours, emojis, strip } = require("@magicalbunny31/awesome-utility-stuff");
-
+const { sep } = require("node:path");
+const { AttachmentBuilder, codeBlock, EmbedBuilder, heading, HeadingLevel, hyperlink, underline, unorderedList } = require("discord.js");
+const { colours, strip } = require("@magicalbunny31/pawesome-utility-stuffs");
 const { name, version } = require("../../package.json");
 
-/**
- * fennec-utilities developer commands 💻
- * @param {Discord.Message} message [discord.js](https://discord.js.org)' message object, found when a [`Message`](https://discord.js.org/#/docs/discord.js/main/class/Message) event is fired from the [`Client`](https://discord.js.org/#/docs/discord.js/main/class/Client) 💬
- * @param {import("../../").Client} fennec this fennec client 🦊
- * @param {Discord.Snowflake[]} developers array of users which can use these commands 🤖
- * @returns {Promise<void>} stuff happens, the function runs. what else do we need to return? 📰
- */
-module.exports = async (message, fennec, developers) => {
+
+module.exports = async (message, developers, emojis) => {
    // ignore bots and webhooks
    if (message.author.bot || message.webhookId)
       return;
@@ -39,27 +32,27 @@ module.exports = async (message, fennec, developers) => {
 
 
    // developer commands embed
-   const developerCommandsEmbed = new Discord.EmbedBuilder()
+   const developerCommandsEmbed = new EmbedBuilder()
       .setColor(colours.fennec)
       .setFooter({
          text: strip`
             💻 developer commands
             📦 ${name} ${version}
          `,
-         iconURL: `attachment://fennec.png`
+         iconURL: `attachment://fennec.webp`
       });
 
    const developerCommandsFiles = [
-      new Discord.AttachmentBuilder()
+      new AttachmentBuilder()
          .setFile(
             [
                ...__dirname
-                  .split(path.sep)
+                  .split(sep)
                   .slice(0, -2),
                `assets`,
-               `fennec.png`
+               `fennec.webp`
             ]
-               .join(path.sep)
+               .join(sep)
          )
    ];
 
@@ -88,10 +81,15 @@ module.exports = async (message, fennec, developers) => {
             await message.reply({
                embeds: [
                   developerCommandsEmbed
-                     .setDescription(strip`
-                        ### ${emojis.no} no code to evaluate!
-                        > - input something maybe~ ${emojis.mhn}
-                     `)
+                     .setDescription(
+                        [
+                           heading(`${emojis.no} no code to evaluate!`, HeadingLevel.Three),
+                           unorderedList([
+                              `input something maybe~ ${emojis.mhn}`
+                           ])
+                        ]
+                           .join(`\n`)
+                     )
                ],
                files: developerCommandsFiles,
                allowedMentions: {
@@ -107,10 +105,15 @@ module.exports = async (message, fennec, developers) => {
             await message.reply({
                embeds: [
                   developerCommandsEmbed
-                     .setDescription(strip`
-                        ### ${emojis.no} can't evaluate this code..
-                        > - a blacklisted word was found ${emojis.rip}
-                     `)
+                     .setDescription(
+                        [
+                           heading(`${emojis.no} can't evaluate this code..`, HeadingLevel.Three),
+                           unorderedList([
+                              `a blacklisted word was found ${emojis.rip}`
+                           ])
+                        ]
+                           .join(`\n`)
+                     )
                ],
                files: developerCommandsFiles,
                allowedMentions: {
@@ -141,42 +144,44 @@ module.exports = async (message, fennec, developers) => {
                   developerCommandsEmbed
                      .setFields({
                         name: `${emojis.envelope_with_arrow} input`,
-                        value: Discord.codeBlock(
+                        value: codeBlock(
                            `js`,
-                           Discord.codeBlock(`js`, code).length > 1024
-                              ? strip`
-                                 ${code.slice(0, 1016)}
-                                 // ...
-                              `
+                           codeBlock(`js`, code).length > 1024
+                              ? [
+                                 code.slice(0, 1016),
+                                 `// ...`
+                              ]
+                                 .join(`\n`)
                               : code
                         )
                      }, {
                         name: `${emojis.laptop} output`,
-                        value: Discord.codeBlock(
+                        value: codeBlock(
                            `js`,
-                           Discord.codeBlock(`js`, output).length > 1024
-                              ? strip`
-                                 ${output.slice(0, 1016)}
-                                 // ...
-                              `
+                           codeBlock(`js`, output).length > 1024
+                              ? [
+                                 output.slice(0, 1016),
+                                 `// ...`
+                              ]
+                                 .join(`\n`)
                               : output
                         )
                      })
                ],
                files: [
                   ...developerCommandsFiles,
-                  ...Discord.codeBlock(`js`, code).length > 1024
+                  ...codeBlock(`js`, code).length > 1024
                      ? [
-                        new Discord.AttachmentBuilder()
+                        new AttachmentBuilder()
                            .setFile(
                               Buffer.from(code)
                            )
                            .setName(`input.js`)
                      ]
                      : [],
-                  ...Discord.codeBlock(`js`, output).length > 1024
+                  ...codeBlock(`js`, output).length > 1024
                      ? [
-                        new Discord.AttachmentBuilder()
+                        new AttachmentBuilder()
                            .setFile(
                               Buffer.from(output)
                            )
@@ -189,7 +194,7 @@ module.exports = async (message, fennec, developers) => {
                }
             });
 
-         // stop here
+         // break out
          break;
       };
 
@@ -204,37 +209,34 @@ module.exports = async (message, fennec, developers) => {
          await message.reply({
             embeds: [
                developerCommandsEmbed
-                  .setDescription(strip`
-                     ### ${message.client.user} ephemeral-evaluate __\`code\`__
-                     > - basically evaluate except it doesn't respond with anything
-
-                     ### ${message.client.user} evaluate __\`code\`__
-                     > - evaluate some js code on this process
-
-                     ### ${message.client.user} help
-                     > - see this command??
-                     >  - yes, that's the help command!!
-
-                     ### ${message.client.user} restart
-                     > - restarts the bot
-                     >  - if this process isn't managed by a process manager, it won't restart~
-                     >  - *~~..this literally just stops its process and lets the process manager start it again~~*
-
-                     ### ${message.client.user} status __\`online | offline-soon | maintenance\`__ __\`reason\`__?
-                     > - changes this bot's set status
-                     >  - __\`online\`__ : normal usage (\`reason\` is null if changing to __\`online\`__)
-                     >  - __\`offline-soon\`__ : changes discord status and warns non-developers of downtime soon
-                     >  - __\`maintenance\`__ : commands cannot be used by non-developers
-
-                     ### ${message.client.user} to-do
-                     > - view all to-do items for this bot
-
-                     ### ${message.client.user} to-do add __\`item name\`__
-                     > - adds a to-do item for this bot
-
-                     ### ${message.client.user} to-do remove __\`item index\`__
-                     > - removes a to-do item with this index for this bot
-                  `)
+                  .setDescription(
+                     [
+                        heading(`${message.client.user} ephemeral-evaluate ${underline(codeBlock(`code`))}`, HeadingLevel.Three),
+                        unorderedList([
+                           `basically evaluate except it doesn't respond with anything`
+                        ]),
+                        heading(`${message.client.user} evaluate ${underline(codeBlock(`code`))}`, HeadingLevel.Three),
+                        unorderedList([
+                           `evaluate some js code on this process`
+                        ]),
+                        heading(`${message.client.user} help`, HeadingLevel.Three),
+                        unorderedList([
+                           `see this command ??`,
+                           [
+                              `yes, that's the help command !!`
+                           ]
+                        ]),
+                        heading(`${message.client.user} restart`, HeadingLevel.Three),
+                        unorderedList([
+                           `"restarts" the bot`,
+                           [
+                              `..this kinda just calls ${codeBlock(`process.exit(0)`)} on the code and lets the process manager, like ${hyperlink(`pm2`, `https://pm2.io`)}, restart the process for you`,
+                              `note that this will just kill the process if it's not managed by a process manager or if programmed to not restart automatically`
+                           ]
+                        ])
+                     ]
+                        .join(`\n`)
+                  )
             ],
             files: developerCommandsFiles,
             allowedMentions: {
@@ -258,244 +260,5 @@ module.exports = async (message, fennec, developers) => {
       };
 
 
-      /* status */
-      case `status`: {
-         // args
-         const [ status ] = args;
-         const reason = message.content
-            .slice(message.content.indexOf(status) + status.length)
-            .trim();
-
-         // not a status
-         if (![ `online`, `offline-soon`, `maintenance` ].includes(status)) {
-            await message.reply({
-               embeds: [
-                  developerCommandsEmbed
-                     .setDescription(strip`
-                        ### ${emojis.no} \`${status}\` isn't a valid status..
-                        > - it must be one of: \`online\` | \`offline soon\` | \`maintenance\` ${emojis.mhn}
-                     `)
-               ],
-               files: developerCommandsFiles,
-               allowedMentions: {
-                  repliedUser: false
-               }
-            });
-
-            // stop here
-            break;
-         };
-
-         // no reason (and not changing to online)
-         if (!reason && [ `offline-soon`, `maintenance` ].includes(status)) {
-            await message.reply({
-               embeds: [
-                  developerCommandsEmbed
-                     .setDescription(strip`
-                        ### ${emojis.no} you need to input a reason!
-                        > - for example: why's ${message.client.user}'s status changing to \`${status}\`? ${emojis.mhn}
-                     `)
-               ],
-               files: developerCommandsFiles,
-               allowedMentions: {
-                  repliedUser: false
-               }
-            });
-
-            // stop here
-            break;
-         };
-
-         // change status, it's that easy!
-         await fennec.updateStatus(status, [ `offline-soon`, `maintenance` ].includes(status) ? reason : null);
-
-         // react to the message
-         await message.react(emojis.yes);
-
-         // stop here
-         break;
-      };
-
-
-      /* to-do */
-      case `to-do`: {
-         // send typing
-         await message.channel.sendTyping();
-
-         // database path for to-dos
-         const database = fennec.firestore.firestore.collection(`to-do`).doc(fennec.firestore.documentName);
-         const docExists = !!(await database.get()).data();
-         const { items = [] } = (await database.get()).data() || {};
-
-
-         switch (args[0]) {
-
-
-            // view all to-do items for this bot
-            default: {
-               await message.reply({
-                  embeds: [
-                     developerCommandsEmbed
-                        .setDescription(
-                           items
-                              .map((item, i) => `${i}. ${item}`)
-                              .join(`\n`)
-                           || `### ${emojis.rip} no to-do items..`
-                        )
-                  ],
-                  files: developerCommandsFiles,
-                  allowedMentions: {
-                     repliedUser: false
-                  }
-               });
-
-               break;
-            };
-
-
-            // add a to-do item to this bot
-            case `add`: {
-               const item = message.content
-                  .slice(message.content.indexOf(args[0]) + args[0].length)
-                  .trim();
-
-               if (!item) {
-                  await message.reply({
-                     embeds: [
-                        developerCommandsEmbed
-                           .setDescription(strip`
-                              ### ${emojis.no} no item to add!
-                              > - input something maybe~ ${emojis.mhn}
-                           `)
-                     ],
-                     files: developerCommandsFiles,
-                     allowedMentions: {
-                        repliedUser: false
-                     }
-                  });
-
-                  break;
-               };
-
-               items.push(item);
-
-               if (docExists)
-                  await database.update({ items });
-               else
-                  await database.set({ items });
-
-               await message.reply({
-                  embeds: [
-                     developerCommandsEmbed
-                        .setDescription(strip`
-                           ### ${emojis.yes} added to-do item~
-                           > - view current to-dos with **${emojis.active_threads} ${message.client.user} to-do** ${emojis.mhn}
-                        `)
-                  ],
-                  files: developerCommandsFiles,
-                  allowedMentions: {
-                     repliedUser: false
-                  }
-               });
-
-               break;
-            };
-
-
-            // removes a to-do item at this index from this bot
-            case `remove`: {
-               const index = +args[1];
-
-               if (isNaN(index)) {
-                  await message.reply({
-                     embeds: [
-                        developerCommandsEmbed
-                           .setDescription(strip`
-                              ### ${emojis.no} \`${args[1]}\` isn't a valid index..
-                              > - it must be an integer ${emojis.mhn}
-                           `)
-                     ],
-                     files: developerCommandsFiles,
-                     allowedMentions: {
-                        repliedUser: false
-                     }
-                  });
-
-                  break;
-               };
-
-               if (index < 0) {
-                  await message.reply({
-                     embeds: [
-                        developerCommandsEmbed
-                           .setDescription(strip`
-                              ### ${emojis.no} to-do index \`${index}\` is out of range..
-                              > - choose a higher number ${emojis.mhn}
-                           `)
-                     ],
-                     files: developerCommandsFiles,
-                     allowedMentions: {
-                        repliedUser: false
-                     }
-                  });
-
-                  break;
-               };
-
-               if (index + 1 > items.length) {
-                  await message.reply({
-                     embeds: [
-                        developerCommandsEmbed
-                           .setDescription(strip`
-                              ### ${emojis.no} to-do index \`${index}\` is out of range..
-                              > - choose a lower number ${emojis.mhn}
-                           `)
-                     ],
-                     files: developerCommandsFiles,
-                     allowedMentions: {
-                        repliedUser: false
-                     }
-                  });
-
-                  break;
-               };
-
-               items.splice(index, 1);
-
-               if (docExists)
-                  await database.update({ items });
-               else
-                  await database.set({ items });
-
-               await message.reply({
-                  embeds: [
-                     developerCommandsEmbed
-                        .setDescription(strip`
-                           ### ${emojis.yes} removed to-do item~
-                           > - view current to-dos with **${emojis.active_threads} ${message.client.user} to-do** ${emojis.mhn}
-                        `)
-                  ],
-                  files: developerCommandsFiles,
-                  allowedMentions: {
-                     repliedUser: false
-                  }
-               });
-
-               break;
-            };
-
-
-         };
-      };
-
-
-      // not a command
-      default: break;
-
-
    };
-
-
-   // return nothing!!
-   return;
 };
