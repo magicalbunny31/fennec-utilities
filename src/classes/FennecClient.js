@@ -11,12 +11,14 @@ const Methods = {
 const HTTPStatusCodes = {
    NoContent: 204,
    Forbidden: 403,
+   NotFound: 404,
    Conflict: 409,
    InternalServerError: 500
 };
 
 
 const Routes = {
+   Announcement: `/announcement`,
    ApplicationStatusApplicationStatisticsStatus: `/application-status/application-statistics/status`,
    Blacklist: `/blacklist`,
    BlacklistUser: userId => `/blacklist/${userId}`,
@@ -125,13 +127,22 @@ module.exports = class FennecClient {
          throw this.#notInitialisedError;
 
       // get blacklist data about this userId
-      const blacklistData = await this.#sendRequest(Methods.Get, Routes.BlacklistUser(userId));
+      const response = await this.#sendRequest(Methods.Get, Routes.BlacklistUser(userId));
+
+      // no status
+      if (response.status === HTTPStatusCodes.NotFound)
+         return undefined;
 
       // format data
       return {
-         by: blacklistData.data?.by,
-         at: blacklistData.data?.at,
-         reason: blacklistData.data?.reason
+         by: response.data.by,
+         at: new Date(Date.parse(response.data.at)),
+         reason: response.data.reason,
+         ...response.data.delete
+            ? {
+               delete: new Date(Date.parse(response.data.delete))
+            }
+            : {}
       };
    };
 
@@ -248,10 +259,47 @@ module.exports = class FennecClient {
          throw this.#notInitialisedError;
 
       // get application status data
-      const { data: applicationStatusData } = await this.#sendRequest(Methods.Get, Routes.ApplicationStatusApplicationStatisticsStatus);
+      const response = await this.#sendRequest(Methods.Get, Routes.ApplicationStatusApplicationStatisticsStatus);
+
+      // no status
+      if (response.status === HTTPStatusCodes.NotFound)
+         return undefined;
 
       // return application status data
-      return applicationStatusData;
+      return {
+         name: response.data.name,
+         ...response.data.message
+            ? {
+               message: response.data.message
+            }
+            : {},
+         at: new Date(Date.parse(response.data.at))
+      };
+   };
+
+
+   async getAnnouncement() {
+      // client not initialised
+      if (!this.#initialised)
+         throw this.#notInitialisedError;
+
+      // get announcement data
+      const response = await this.#sendRequest(Methods.Get, Routes.Announcement);
+
+      // no status
+      if (response.status === HTTPStatusCodes.NotFound)
+         return undefined;
+
+      // return announcement data
+      return {
+         message: response.data.message,
+         at: new Date(Date.parse(response.data.at)),
+         ...response.data.delete
+            ? {
+               delete: new Date(Date.parse(response.data.delete))
+            }
+            : {}
+      };
    };
 
 

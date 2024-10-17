@@ -10,22 +10,23 @@ export type BlacklistCache = {
 export type BlacklistEntry = {
    /**
     * 👤 the user id of the person who created this `BlacklistEntry`
-    *
-    * ❓ this field will be `undefined` if the `userId` belonging to this `BlacklistEntry`
    */
-   by: string?;
+   by: string;
 
    /**
-    * ⌚ unix timestamp (in milliseconds) of when this `BlacklistEntry` was created
-    *
-    * ❓ this field will be `undefined` if the `userId` belonging to this `BlacklistEntry`
+    * 🗓️ `Date` of when this `BlacklistEntry` was created
    */
-   at: number?;
+   at: Date;
 
    /**
     * 🏷️ the reason why this `BlacklistEntry` was created
-    *
-    * ❓ this field will be `undefined` if the `userId` belonging to this `BlacklistEntry`
    */
-   reason: string?;
+   reason: string;
+
+   /**
+    * 🗓️ `Date` of when this `BlacklistEntry` will expire
+    *
+    * ❓ this field will be omitted if this `BlacklistEntry`'s doesn't expire
+   */
+   delete?: Date;
 };

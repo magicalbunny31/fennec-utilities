@@ -119,10 +119,17 @@ export class FennecClient {
    /**
     * 📋 get this application's application statistics status from their application status
     *
-    * ❓ fields will be `undefined` if this app doesn't have an `application-status` or if its ApplicationStatistics field is unknown
+    * ❓ fields will be omitted if its `application-statistics` field is unknown
+    *
+    * ❓ the return value will be `undefined` if this app doesn't have an `application-status`
     * @returns 📄 the `application-status`' `application-statistics`' `status` field
     */
-   async getApplicationStatusApplicationStatisticsStatus(): Promise<ApplicationStatisticsStatus>;
+   async getApplicationStatusApplicationStatisticsStatus(): Promise<ApplicationStatisticsStatus?>;
+
+
+   async getAnnouncement(): Promise<>;
+
+
 };
 
 
