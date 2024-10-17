@@ -1,3 +1,17 @@
+export type AnnouncementCache = {
+   announcement: Announcement;
+   lastUpdatedAt: Date;
+};
+
+
+type AnnouncementUsers = string[];
+
+export type AnnouncementUsersCache = {
+   users: AnnouncementUsers
+   lastUpdatedAt: Date;
+};
+
+
 export type Announcement = {
    /**
     * 📰 this announcement

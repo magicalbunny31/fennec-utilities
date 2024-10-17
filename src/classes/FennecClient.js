@@ -19,6 +19,8 @@ const HTTPStatusCodes = {
 
 const Routes = {
    Announcement: `/announcement`,
+   AnnouncementUser: userId => `/announcement/${userId}`,
+   AnnouncementUsers: `/announcement/users`,
    ApplicationStatusApplicationStatisticsStatus: `/application-status/application-statistics/status`,
    Blacklist: `/blacklist`,
    BlacklistUser: userId => `/blacklist/${userId}`,
@@ -37,6 +39,8 @@ module.exports = class FennecClient {
    #initialised = false;
    #notInitialisedError = new Error(`🚫 class FennecClient method #initialise() not run yet`);
    #blacklistCache;
+   #announcementCache;
+   #announcementUsersCache;
 
 
    constructor(baseUrl, authorisation) {
@@ -72,11 +76,44 @@ module.exports = class FennecClient {
 
    async #updateBlacklistCache() {
       // get blacklisted users
-      const blacklist = await this.#sendRequest(Methods.Get, Routes.Blacklist);
+      const response = await this.#sendRequest(Methods.Get, Routes.Blacklist);
 
       // update the cache
       this.#blacklistCache = {
-         blacklist,
+         blacklist: response.data,
+         lastUpdatedAt: new Date()
+      };
+   };
+
+
+   async #updateAnnouncementCache() {
+      // get announcement data
+      const response = await this.#sendRequest(Methods.Get, Routes.Announcement);
+
+      // no status
+      this.#announcementCache = {
+         announcement: response.status === HTTPStatusCodes.NotFound
+            ? undefined
+            : {
+               message: response.data.message,
+               at: new Date(Date.parse(response.data.at)),
+               ...response.data.delete
+                  ? {
+                     delete: new Date(Date.parse(response.data.delete))
+                  }
+                  : {}
+            },
+         lastUpdatedAt: new Date()
+      };
+   };
+
+
+   async #updateAnnouncementUsersCache() {
+      // get announcement users data
+      const response = await this.#sendRequest(Methods.Get, Routes.AnnouncementUsers);
+
+      this.#announcementUsersCache = {
+         users: response.data,
          lastUpdatedAt: new Date()
       };
    };
@@ -95,6 +132,8 @@ module.exports = class FennecClient {
       // methods to run
       const intervalFunction = async () => {
          await this.#updateBlacklistCache();
+         await this.#updateAnnouncementCache();
+         await this.#updateAnnouncementUsersCache();
          await this.#updateOnlineStatus();
       };
 
@@ -116,7 +155,7 @@ module.exports = class FennecClient {
          throw this.#notInitialisedError;
 
       // check if this userId is on the blacklist cache
-      const { data: blacklist } = this.#blacklistCache.blacklist;
+      const { blacklist } = this.#blacklistCache.blacklist;
       return blacklist.includes(userId);
    };
 
@@ -278,28 +317,40 @@ module.exports = class FennecClient {
    };
 
 
-   async getAnnouncement() {
+   getAnnouncement() {
       // client not initialised
       if (!this.#initialised)
          throw this.#notInitialisedError;
 
-      // get announcement data
-      const response = await this.#sendRequest(Methods.Get, Routes.Announcement);
-
-      // no status
-      if (response.status === HTTPStatusCodes.NotFound)
-         return undefined;
-
       // return announcement data
-      return {
-         message: response.data.message,
-         at: new Date(Date.parse(response.data.at)),
-         ...response.data.delete
-            ? {
-               delete: new Date(Date.parse(response.data.delete))
-            }
-            : {}
-      };
+      const { announcement } = this.#announcementCache;
+      return announcement;
+   };
+
+
+   async setSeenAnnouncement(userId) {
+      // client not initialised
+      if (!this.#initialised)
+         throw this.#notInitialisedError;
+
+      // no announcement set: don't set anything
+      const response = await this.#sendRequest(Methods.Get, Routes.Announcement);
+      if (response.status === HTTPStatusCodes.NotFound)
+         return;
+
+      // set that this user has seen this application's announcement
+      await this.#sendRequest(Methods.Post, Routes.AnnouncementUser(userId));
+   };
+
+
+   hasSeenAnnouncement(userId) {
+      // client not initialised
+      if (!this.#initialised)
+         throw this.#notInitialisedError;
+
+      // get announcement users
+      const { users } = this.#announcementUsersCache;
+      return users.includes(userId);
    };
 
 

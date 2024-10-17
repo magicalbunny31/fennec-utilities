@@ -1,3 +1,4 @@
+import { Announcement } from "./Announcement";
 import { ApplicationStatisticsStatus } from "./ApplicationStatus";
 import { BlacklistCache, BlacklistEntry } from "./Blacklist";
 
@@ -35,6 +36,12 @@ export class FennecClient {
 
 
    private async updateBlacklistCache(): Promise<void>;
+
+
+   private async updateAnnouncementCache(): Promise<void>;
+
+
+   private async updateAnnouncementUsersCache(): Promise<void>;
 
 
    private async updateOnlineStatus(): Promise<void>;
@@ -127,7 +134,26 @@ export class FennecClient {
    async getApplicationStatusApplicationStatisticsStatus(): Promise<ApplicationStatisticsStatus?>;
 
 
-   async getAnnouncement(): Promise<>;
+   getAnnouncement(): Announcement;
+
+
+   /**
+    * 📃 set if a `userId` has seen this application's announcement
+    * 
+    * ⌚ this queries the database: if there is no set announcement, calling this method won't do anything
+    * @param userId 👤 the user id to set if they've seen this application's announcement
+    */
+   async setSeenAnnouncement(userId: string): Promise<void>;
+
+
+   /**
+    * 📃 check if a `userId` has seen this application's announcement
+    *
+    * ⌚ since this checks the `.#announcementCache`, it may be outdated by 15 minutes
+    * @param userId 👤 the user id to check if they've seen this application's announcement
+    * @returns 🏷️ whether this `userId` has seen this application's announcement
+    */
+   hasSeenAnnouncement(userId: string): boolean;
 
 
 };
