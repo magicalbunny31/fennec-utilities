@@ -138,7 +138,7 @@ module.exports = async (interaction, fennec, notificationType, emojis) => {
                            [
                               `this means that you will be unable to use this app's commands until the developers mark it as online again`
                            ],
-                           `for any queries, join the ${hyperlink(`support server`, guild)}`
+                           `for any queries, join the ${hyperlink(`support server`, guild)}`,
                            `information about this can be found below`
                         ])
                      ),
