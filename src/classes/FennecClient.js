@@ -99,7 +99,7 @@ module.exports = class FennecClient {
                at: new Date(Date.parse(response.data.at)),
                ...response.data.delete
                   ? {
-                     delete: new Date(Date.parse(response.data.delete))
+                     delete: new Date(Date.parse(response.data.at))
                   }
                   : {}
             },
