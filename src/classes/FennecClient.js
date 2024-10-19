@@ -155,7 +155,7 @@ module.exports = class FennecClient {
          throw this.#notInitialisedError;
 
       // check if this userId is on the blacklist cache
-      const { blacklist } = this.#blacklistCache.blacklist;
+      const { blacklist } = this.#blacklistCache;
       return blacklist.includes(userId);
    };
 
