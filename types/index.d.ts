@@ -129,7 +129,7 @@ export class FennecClient {
     * ❓ fields will be omitted if its `application-statistics` field is unknown
     *
     * ❓ the return value will be `undefined` if this app doesn't have an `application-status`
-    * @returns 📄 the `application-status`' `application-statistics`' `status` field
+    * @returns 📄 the `application-status`' `application-statistics`' `name` field
     */
    async getApplicationStatusApplicationStatisticsStatus(): Promise<ApplicationStatisticsStatus?>;
 
