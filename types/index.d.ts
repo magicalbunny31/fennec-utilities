@@ -160,6 +160,31 @@ export class FennecClient {
 
 
 /**
+ * 🏷️ valid fields for `ApplicationStatisticsStatusName`
+ */
+export const ApplicationStatisticsStatusName: typeof import("../src/data/ApplicationStatisticsStatusName.js");
+
+
+/**
+ * 🏷️ valid fields for `NotificationType`
+ */
+export const NotificationType: typeof import("../src/data/NotificationType.js");
+
+
+/**
+ * 📃 links to the privacy policy
+ */
+export const PrivacyPolicy: typeof import("../src/data/PrivacyPolicy.js");
+
+
+/**
+ * 📙 link to the terms of service
+ */
+export const TermsOfService: typeof import("../src/data/TermsOfService.js");
+
+
+
+/**
  * 💻 developer commands by `fennec-utilities`
  * @param message 💬 the [discord.js](https://discord.js.org)' [`Message`](https://discord.js.org/docs/packages/discord.js/main/Message:Class) object
  * @param developers 🤖 the user ids which can invoke these commands
