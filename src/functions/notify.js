@@ -63,7 +63,7 @@ module.exports = async (interaction, fennec, notificationType, emojis) => {
 
          case NotificationType.Blacklist:
             const blacklistInfo = await fennec.getUserBlacklistInfo(interaction.user.id);
-            return {
+            const payload = {
                embeds: [
                   new EmbedBuilder()
                      .setColor(colours.red)
@@ -80,17 +80,6 @@ module.exports = async (interaction, fennec, notificationType, emojis) => {
                      ),
                   new EmbedBuilder()
                      .setColor(accentColour)
-                     .setDescription(
-                        blacklistInfo
-                           ? unorderedList([
-                              `your blacklist has expired and you are confirmed to not be on it anymore! ${emojis.yaya}`
-                              `however, the blacklist is updated every 15 minutes: you must wait a little while until you are able to use ${interaction.client.user} again`,
-                              [
-                                 `see you later, ${interaction.user}~`
-                              ]
-                           ])
-                           : null
-                     )
                      .setFields(
                         [{
                            name: `${emojis.calendar_spiral} you were added to the blacklist at`,
@@ -124,6 +113,17 @@ module.exports = async (interaction, fennec, notificationType, emojis) => {
                      )
                ]
             };
+            if (!blacklistInfo)
+               payload.embeds[1].setDescription(
+                  unorderedList([
+                     `your blacklist has expired and you are confirmed to not be on it anymore! ${emojis.yaya}`,
+                     `however, the blacklist is updated every 15 minutes: you must wait a little while until you are able to use ${interaction.client.user} again`,
+                     [
+                        `see you later, ${interaction.user}~`
+                     ]
+                  ])
+               );
+            return payload;
 
          case NotificationType.Offline:
             const status = await fennec.getApplicationStatusApplicationStatisticsStatus();
