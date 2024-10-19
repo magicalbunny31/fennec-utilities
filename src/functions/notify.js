@@ -144,11 +144,8 @@ module.exports = async (interaction, fennec, notificationType, emojis) => {
                      ),
                   new EmbedBuilder()
                      .setColor(colours.light_grey)
-                     .setFields({
-                        name: `${emojis.watch} ${interaction.client.user} was marked offline at`,
-                        value: time(status.at)
-                     })
-                     .setDescription(status)
+                     .setDescription(status.message)
+                     .setTimestamp(status.at)
                ],
                components: [
                   new ActionRowBuilder()
