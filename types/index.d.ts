@@ -191,3 +191,15 @@ export const TermsOfService: typeof import("../src/data/TermsOfService.js");
  * @param allEmojis 🦊 guild and application emojis, from [`@magicalbunny31/pawesome-utility-stuffs`](https://github.com/magicalbunny31/pawesome-utility-stuffs)
  */
 export async function developerCommands(message: Message, developers: string[], allEmojis: ReturnType<typeof emojis>): Promise<void>;
+
+
+/**
+ * 💬 notify the person about a specific `notificationType`
+ * 
+ * 📣 when the `notificationType` is `NotificationType.Announcement`: this will check if the person has seen this announcement and, if not, show them the announcement and set them as having seen the announcement
+ * @param interaction 💬 the [discord.js](https://discord.js.org)' `Interaction` object
+ * @param fennec 💻 this app's `FennecClient`
+ * @param notificationType 🏷️ the `NotificationType` to show
+ * @param emojis 🦊 guild and application emojis, from [`@magicalbunny31/pawesome-utility-stuffs`](https://github.com/magicalbunny31/pawesome-utility-stuffs)
+ */
+export async function notify(interaction: Interaction, fennec: FennecClient, notificationType: typeof NotificationType, emojis: ReturnType<typeof emojis>): Promise<void>;
