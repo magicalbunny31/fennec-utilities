@@ -204,7 +204,7 @@ module.exports = class FennecClient {
          by: byUserId,
          at: at.getTime(),
          reason,
-         delete: expiresAt
+         delete: expiresAt?.getTime()
       });
 
       // add to blacklist
