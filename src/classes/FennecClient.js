@@ -232,6 +232,9 @@ module.exports = class FennecClient {
       // other error
       else if (response.status === HTTPStatusCodes.InternalServerError)
          throw new Error(`🚫 error at FennecClient.addToBlacklist()\n\n${response.data}`);
+
+      // add to the blacklist cache
+      this.#blacklistCache.blacklist.push(userId);
    };
 
 
@@ -250,6 +253,9 @@ module.exports = class FennecClient {
       // other error
       else if (response.status === HTTPStatusCodes.InternalServerError)
          throw new Error(`🚫 error at FennecClient.addToBlacklist()\n\n${response.data}`);
+
+      // remove from the blacklist cache
+      this.#blacklistCache.blacklist = this.#blacklistCache.blacklist.filter(blacklistUserId => blacklistUserId !== userId);
    };
 
 
