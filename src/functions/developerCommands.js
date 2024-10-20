@@ -1,5 +1,5 @@
 const { sep } = require("node:path");
-const { AttachmentBuilder, codeBlock, EmbedBuilder, heading, HeadingLevel, hyperlink, underline, unorderedList } = require("discord.js");
+const { AttachmentBuilder, codeBlock, EmbedBuilder, heading, HeadingLevel, hyperlink, underline, unorderedList, inlineCode } = require("discord.js");
 const { colours, strip } = require("@magicalbunny31/pawesome-utility-stuffs");
 const { name, version } = require("../../package.json");
 
@@ -211,11 +211,11 @@ module.exports = async (message, developers, emojis) => {
                developerCommandsEmbed
                   .setDescription(
                      [
-                        heading(`${message.client.user} ephemeral-evaluate ${underline(codeBlock(`code`))}`, HeadingLevel.Three),
+                        heading(`${message.client.user} ephemeral-evaluate ${underline(inlineCode(`code`))}`, HeadingLevel.Three),
                         unorderedList([
                            `basically evaluate except it doesn't respond with anything`
                         ]),
-                        heading(`${message.client.user} evaluate ${underline(codeBlock(`code`))}`, HeadingLevel.Three),
+                        heading(`${message.client.user} evaluate ${underline(inlineCode(`code`))}`, HeadingLevel.Three),
                         unorderedList([
                            `evaluate some js code on this process`
                         ]),
@@ -230,7 +230,7 @@ module.exports = async (message, developers, emojis) => {
                         unorderedList([
                            `"restarts" the bot`,
                            [
-                              `..this kinda just calls ${codeBlock(`process.exit(0)`)} on the code and lets the process manager, like ${hyperlink(`pm2`, `https://pm2.io`)}, restart the process for you`,
+                              `..this kinda just calls ${inlineCode(`process.exit(0)`)} on the code and lets the process manager, like ${hyperlink(`pm2`, `https://pm2.io`)}, restart the process for you`,
                               `note that this will just kill the process if it's not managed by a process manager or if programmed to not restart automatically`
                            ]
                         ])
