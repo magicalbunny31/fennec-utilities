@@ -149,6 +149,17 @@ module.exports = class FennecClient {
    };
 
 
+   listBlacklist() {
+      // client not initialised
+      if (!this.#initialised)
+         throw this.#notInitialisedError;
+
+      // return the blacklist cache
+      const { blacklist } = this.#blacklistCache;
+      return blacklist;
+   };
+
+
    isOnBlacklist(userId) {
       // client not initialised
       if (!this.#initialised)

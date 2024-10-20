@@ -54,6 +54,14 @@ export class FennecClient {
 
 
    /**
+    * 📃 get the list of user ids on the blacklist
+    *
+    * ⌚ since this checks the `.#blacklistCache`, it may be outdated by 15 minutes
+    */
+   listBlacklist(): string[];
+
+
+   /**
     * 📃 check if a `userId` is on the blacklist
     *
     * ⌚ since this checks the `.#blacklistCache`, it may be outdated by 15 minutes - use `.getUserBlacklistInfo()` to query the database for a more up-to-date update
