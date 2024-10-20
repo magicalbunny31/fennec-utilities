@@ -83,8 +83,9 @@ export class FennecClient {
     * @param byUserId 👥 the user id who added this `userId` to the blacklist
     * @param at 🗓️ date of when this `userId` was added to the blacklist
     * @param reason 📃 reason why this `userId` was added to the blacklist: cannot be a multi-line string and must be <= 1024 characters in length
+    * @param expiresAt ⌚ date of when this `userId` will be removed from the blacklist
     */
-   async addToBlacklist(userId: string, byUserId: string, at: Date, reason: string): Promise<void>;
+   async addToBlacklist(userId: string, byUserId: string, at: Date, reason: string, expiresAt?: Date): Promise<void>;
 
 
    /**

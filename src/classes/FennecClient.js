@@ -186,24 +186,25 @@ module.exports = class FennecClient {
    };
 
 
-   async addToBlacklist(userId, byUserId, at, reason) {
+   async addToBlacklist(userId, byUserId, at, reason, expiresAt) {
       // client not initialised
       if (!this.#initialised)
          throw this.#notInitialisedError;
 
       // reason too long
       if (reason.length > 1024)
-         throw new Error (`🚫 reason argument for FennecClient.addToBlacklist() too long`);
+         throw new Error(`🚫 reason argument for FennecClient.addToBlacklist() too long`);
 
       // reason is multiline
       if (/\r|\n/.test(reason))
-         throw new Error (`🚫 reason argument for FennecClient.addToBlacklist() is multiline`);
+         throw new Error(`🚫 reason argument for FennecClient.addToBlacklist() is multiline`);
 
       // request body
       const body = JSON.stringify({
          by: byUserId,
          at: at.getTime(),
-         reason
+         reason,
+         delete: expiresAt
       });
 
       // add to blacklist
