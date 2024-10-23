@@ -1,4 +1,6 @@
+const { EventEmitter } = require("node:events");
 const { setIntervalAsync } = require("set-interval-async");
+const WebSocket = require("ws");
 
 
 const Methods = {
@@ -34,32 +36,36 @@ const Routes = {
 module.exports = class FennecClient {
 
 
-   #baseUrl;
-   #authorisation;
+   #fennecWorker;
+   #fennecCloudRun;
    #initialised = false;
    #notInitialisedError = new Error(`🚫 class FennecClient method #initialise() not run yet`);
+   #noFennecCloudRunArgs = new Error(`🚫 class FennecClient fennecCloudRun arguments are required to use this method`);
    #blacklistCache;
    #announcementCache;
    #announcementUsersCache;
+   #websocket;
+
+   cloudRun = new EventEmitter();
 
 
-   constructor(baseUrl, authorisation) {
-      // missing arguments
-      if (!baseUrl || !authorisation)
-         throw new Error(`🚫 missing required arguments \`url\` and/or \`authorisation\` on class FennecClient instantiation`);
+   constructor(fennecWorker, fennecCloudRun) {
+      // missing required arguments
+      if (!fennecWorker)
+         throw new Error(`🚫 missing required arguments \`fennecWorker\` on class FennecClient instantiation`);
 
       // set private attributes
-      this.#baseUrl = baseUrl;
-      this.#authorisation = authorisation;
+      this.#fennecWorker   = fennecWorker;
+      this.#fennecCloudRun = fennecCloudRun;
    };
 
 
    async #sendRequest(method, route, body) {
       // send response
-      const response = await fetch(`${this.#baseUrl}${route}`, {
+      const response = await fetch(`${this.#fennecWorker.baseUrl}${route}`, {
          method,
          headers: {
-            Authorization: this.#authorisation,
+            Authorization: this.#fennecWorker.authorisation,
             ...body
                ? { "Content-Type": `application-json` }
                : {}
@@ -124,6 +130,21 @@ module.exports = class FennecClient {
    };
 
 
+   #initialiseWebsocket() {
+      this.#websocket = new WebSocket(`${this.#fennecCloudRun.baseUrl}?token=${encodeURIComponent(this.#fennecCloudRun.authorisation)}`);
+
+      this.#websocket.on(`error`, error => {
+         console.error(`🚫 error at FennecClient.#websocket`);
+         throw error;
+      });
+
+      this.#websocket.on(`message`, rawData => {
+         const data = JSON.parse(rawData);
+         this.cloudRun.emit(`data`, data);
+      });
+   };
+
+
    async initialise() {
       // client already initialised
       if (this.#initialised)
@@ -144,8 +165,51 @@ module.exports = class FennecClient {
       const fifteenMinutes = 15 * 60 * 1000;
       setIntervalAsync(intervalFunction, fifteenMinutes);
 
+      // set up the websocket client to fennec-cloud-run
+      if (this.#fennecCloudRun)
+         this.#initialiseWebsocket();
+
       // client initialised
       this.#initialised = true;
+   };
+
+
+   isConnected(id) {
+      // client not initialised
+      if (!this.#initialised)
+         throw this.#notInitialisedError;
+
+      // #fennecCloudRun options were not specified
+      if (!this.#fennecCloudRun)
+         throw this.#noFennecCloudRunArgs;
+
+      // check if a client is connected
+      return new Promise((resolve, reject) => {
+         this.#websocket.once(`message`, raw => {
+            const data = JSON.parse(raw);
+            resolve(data?.connected);
+         });
+
+         this.#websocket.once(`error`, error => reject(error));
+
+         const dataToSend = JSON.stringify({ id });
+         this.#websocket.send(dataToSend);
+      });
+   };
+
+
+   sendData(toId, data) {
+      // client not initialised
+      if (!this.#initialised)
+         throw this.#notInitialisedError;
+
+      // #fennecCloudRun options were not specified
+      if (!this.#fennecCloudRun)
+         throw this.#noFennecCloudRunArgs;
+
+      // send data
+      const dataToSend = JSON.stringify({ toId, data });
+      this.#websocket.send(dataToSend);
    };
 
 

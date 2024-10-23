@@ -2,17 +2,32 @@ import { Announcement } from "./Announcement";
 import { ApplicationStatisticsStatus } from "./ApplicationStatus";
 import { BlacklistCache, BlacklistEntry } from "./Blacklist";
 
+import { EventEmitter } from "node:events";
 import { emojis } from "@magicalbunny31/pawesome-utility-stuffs";
 import { Interaction, Message } from "discord.js";
+import WebSocket from "ws";
+
+
+type FennecClientInit = {
+   /**
+    * 🌐 base url for requests
+    */
+   baseUrl: string;
+
+   /**
+    * 🔑 api key for requests
+    */
+   authorisation: string;
+};
 
 
 export class FennecClient {
 
 
-   private baseUrl: string;
+   private fennecWorker: FennecClientInit;
 
 
-   private authorisation: string;
+   private fennecCloudRun: FennecClientInit;
 
 
    private initialised: boolean;
@@ -21,15 +36,24 @@ export class FennecClient {
    private notInitialisedError: Error;
 
 
+   private noFennecCloudRunArgs: Error;
+
+
    private blacklistCache: BlacklistCache;
+
+
+   private ws: typeof WebSocket;
+
+
+   cloudRun: typeof EventEmitter;
 
 
    /**
     * 💻 `fennec-utilities`
-    * @param baseUrl 🌐 base url for requests to `fennec-worker`
-    * @param authorisation 🔑 api key for requests to `fennec-worker`
+    * @param fennecWorker ☁️ options for `fennec-worker`
+    * @param fennecCloudRun ☁️ options for `fennec-cloud-run`
     */
-   constructor(baseUrl: string, authorisation: string);
+   constructor(fennecWorker: FennecClientInit, fennecCloudRun?: FennecClientInit);
 
 
    private async sendRequest(method: string, route: string, body: unknown): Promise<unknown>;
@@ -47,10 +71,32 @@ export class FennecClient {
    private async updateOnlineStatus(): Promise<void>;
 
 
+   private initialiseWebsocket(): void;
+
+
    /**
     * 🏳️ initialise the `FennecClient`: must be run once before running other methods
     */
    async initialise(): Promise<void>;
+
+
+   /**
+    * 🏓 check if another `FennecClient` is listening to `fennec-cloud-run`
+    *
+    * 📣 if `undefined` was returned, it may have interfered with a request between other `FennecClient`s and should not be trusted
+    * @param id 🏷️ target `FennecClient` id (type) to check if is listening to `fennec-cloud-run`
+    */
+   isConnected(id: string): Promise<boolean?>;
+
+
+   /**
+    * 📤 send data to another `FennecClient` listening to `fennec-cloud-run`
+    *
+    * 🏓 before running this method, the target `FennecClient` should be checked if it is listening to `fennec-cloud-run` with `FennecClient.isConnected()`
+    * @param toId 🏷️ target `FennecClient` id (type) to send data to
+    * @param data 📦 data to send to this `FennecClient`
+    */
+   sendData(toId: string, data: any): void;
 
 
    /**

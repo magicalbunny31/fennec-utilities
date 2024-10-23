@@ -1,6 +1,6 @@
 {
    "name": "@magicalbunny31/fennec-utilities",
-   "version": "3.0.8",
+   "version": "3.1.0",
    "description": "💻 utility package for interacting with fennec",
    "main": "dist/cjs/index.js",
    "module": "dist/esm/index.js",
@@ -28,7 +28,8 @@
    "dependencies": {
       "@magicalbunny31/pawesome-utility-stuffs": "github:magicalbunny31/pawesome-utility-stuffs",
       "discord.js": "^14.16.3",
-      "set-interval-async": "^3.0.3"
+      "set-interval-async": "^3.0.3",
+      "ws": "^8.18.0"
    },
    "engines": {
       "node": ">=18"
