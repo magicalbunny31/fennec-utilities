@@ -132,7 +132,7 @@ module.exports = async (message, developers, emojis) => {
                try {
                   return await eval(`(async () => { ${code} })()`);
                } catch (error) {
-                  return error;
+                  return error?.message;
                };
             };
          })();
@@ -148,7 +148,7 @@ module.exports = async (message, developers, emojis) => {
                            `js`,
                            codeBlock(`js`, code).length > 1024
                               ? [
-                                 code.slice(0, 1016),
+                                 code.slice(0, 1024 - 28),
                                  `// ...`
                               ]
                                  .join(`\n`)
@@ -158,13 +158,13 @@ module.exports = async (message, developers, emojis) => {
                         name: `${emojis.laptop} output`,
                         value: codeBlock(
                            `js`,
-                           codeBlock(`js`, output).length > 1024
+                           codeBlock(`js`, `${output}`).length > 1024
                               ? [
-                                 output.slice(0, 1016),
+                                 `${output}`.slice(0, 1024 - 28),
                                  `// ...`
                               ]
                                  .join(`\n`)
-                              : output
+                              : `${output}`
                         )
                      })
                ],
@@ -179,11 +179,11 @@ module.exports = async (message, developers, emojis) => {
                            .setName(`input.js`)
                      ]
                      : [],
-                  ...codeBlock(`js`, output).length > 1024
+                  ...codeBlock(`js`, `${output}`).length > 1024
                      ? [
                         new AttachmentBuilder()
                            .setFile(
-                              Buffer.from(output)
+                              Buffer.from(`${output}`)
                            )
                            .setName(`output.js`)
                      ]
