@@ -1,11 +1,11 @@
-type ApplicationStatisticsStatusName = `online` | `offline`;
+export type ApplicationStatisticsStatusName = `online` | `offline`;
 
 
 export type ApplicationStatisticsStatus = {
    /**
-    * 🏷️ type of `ApplicationStatus`
+    * 🗓️ `Date` of when this `ApplicationStatus` was set
     */
-   name: ApplicationStatisticsStatusName;
+   at: Date;
 
    /**
     * 📄 reason why this `ApplicationStatus` was set
@@ -15,7 +15,7 @@ export type ApplicationStatisticsStatus = {
    message?: string;
 
    /**
-    * 🗓️ `Date` of when this `ApplicationStatus` was set
+    * 🏷️ type of `ApplicationStatus`
     */
-   at: Date;
+   name: ApplicationStatisticsStatusName;   
 };

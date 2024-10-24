@@ -14,14 +14,14 @@ export type AnnouncementUsersCache = {
 
 export type Announcement = {
    /**
-    * 📰 this announcement
-    */
-   message: string;
-
-   /**
     * 🗓️ `Date` of when this announcement was created
     */
    at: Date;
+
+   /**
+    * 📰 this announcement
+    */
+   message: string;
 
    /**
     * 🗓️ `Date` of when this announcement expires

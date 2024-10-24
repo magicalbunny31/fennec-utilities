@@ -111,7 +111,7 @@ export class FennecClient {
     * 📃 check if a `userId` is on the blacklist
     *
     * ⌚ since this checks the `.#blacklistCache`, it may be outdated by 15 minutes - use `.getUserBlacklistInfo()` to query the database for a more up-to-date update
-    * @param userId 👤 the user id to check against the blacklist
+    * @param userId 👤 user id to check against the blacklist
     * @returns 🏷️ whether this `userId` is on the blacklist or not
     */
    isOnBlacklist(userId: string): boolean;
@@ -123,7 +123,7 @@ export class FennecClient {
     * 📣 this should **NOT** be used to check if a `userId` is on the blacklist due to how costly this operation can be - use `.isBlacklisted()` instead
     *
     * ⌚ this will query the database, ensuring that data is up-to-date
-    * @param userId 👤 the user id to check against the blacklist
+    * @param userId 👤 user id to check against the blacklist
     * @returns 🏷️ information about this `userId`'s blacklist entry
     */
    async getUserBlacklistInfo(userId: string): Promise<BlacklistEntry>;
@@ -133,8 +133,8 @@ export class FennecClient {
     * ➕ add this `userId` to the blacklist
     * 
     * 🔑 only `discord-fennec-bot`'s api key can use this endpoint, trying to use any other api key will result in a thrown `Error`
-    * @param userId 👤 the user id to add to the blacklist
-    * @param byUserId 👥 the user id who added this `userId` to the blacklist
+    * @param userId 👤 user id to add to the blacklist
+    * @param byUserId 👥 user id who added this `userId` to the blacklist
     * @param at 🗓️ date of when this `userId` was added to the blacklist
     * @param reason 📃 reason why this `userId` was added to the blacklist: cannot be a multi-line string and must be <= 1024 characters in length
     * @param expiresAt ⌚ date of when this `userId` will be removed from the blacklist
@@ -146,7 +146,7 @@ export class FennecClient {
     * ➖ remove this `userId` from the blacklist
     * 
     * 🔑 only `discord-fennec-bot`'s api key can use this endpoint, trying to use any other api key will result in a thrown `Error`
-    * @param userId 👤 the user id to remove from the blacklist
+    * @param userId 👤 user id to remove from the blacklist
     */
    async removeFromBlacklist(userId: string): Promise<void>;
 
@@ -179,7 +179,7 @@ export class FennecClient {
 
 
    /**
-    * 📋 get this application's application statistics status from their application status
+    * 📋 get this application's application statistics' status from their application status
     *
     * ❓ fields will be omitted if its `application-statistics` field is unknown
     *
@@ -189,6 +189,11 @@ export class FennecClient {
    async getApplicationStatusApplicationStatisticsStatus(): Promise<ApplicationStatisticsStatus?>;
 
 
+   /**
+    * 📣 get this application's announcement
+    *
+    * ⌚ since this checks the `.#announcementCache`, it may be outdated by 15 minutes
+    */
    getAnnouncement(): Announcement;
 
 
@@ -196,7 +201,7 @@ export class FennecClient {
     * 📃 set if a `userId` has seen this application's announcement
     * 
     * ⌚ this queries the database: if there is no set announcement, calling this method won't do anything
-    * @param userId 👤 the user id to set if they've seen this application's announcement
+    * @param userId 👤 user id to set if they've seen this application's announcement
     */
    async setSeenAnnouncement(userId: string): Promise<void>;
 
@@ -205,7 +210,7 @@ export class FennecClient {
     * 📃 check if a `userId` has seen this application's announcement
     *
     * ⌚ since this checks the `.#announcementCache`, it may be outdated by 15 minutes
-    * @param userId 👤 the user id to check if they've seen this application's announcement
+    * @param userId 👤 user id to check if they've seen this application's announcement
     * @returns 🏷️ whether this `userId` has seen this application's announcement
     */
    hasSeenAnnouncement(userId: string): boolean;
@@ -242,7 +247,7 @@ export const TermsOfService: typeof import("../src/data/TermsOfService.js");
 /**
  * 💻 developer commands by `fennec-utilities`
  * @param message 💬 the [discord.js](https://discord.js.org)' [`Message`](https://discord.js.org/docs/packages/discord.js/main/Message:Class) object
- * @param developers 🤖 the user ids which can invoke these commands
+ * @param developers 🤖 user ids which can invoke these commands
  * @param allEmojis 🦊 guild and application emojis, from [`@magicalbunny31/pawesome-utility-stuffs`](https://github.com/magicalbunny31/pawesome-utility-stuffs)
  */
 export async function developerCommands(message: Message, developers: string[], allEmojis: ReturnType<typeof emojis>): Promise<void>;
