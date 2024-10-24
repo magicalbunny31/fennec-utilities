@@ -316,7 +316,7 @@ module.exports = class FennecClient {
 
       // other error
       else if (response.status === HTTPStatusCodes.InternalServerError)
-         throw new Error(`🚫 error at FennecClient.addToBlacklist()\n\n${response.data}`);
+         throw new Error(`🚫 error at FennecClient.removeFromBlacklist()\n\n${response.data}`);
 
       // remove from the blacklist cache
       this.#blacklistCache.blacklist = this.#blacklistCache.blacklist.filter(blacklistUserId => blacklistUserId !== userId);
