@@ -1,5 +1,5 @@
 import { Announcement } from "./Announcement";
-import { ApplicationStatisticsStatus } from "./ApplicationStatus";
+import { ApplicationStatisticsStatus, ApplicationStatisticsStatusName } from "./ApplicationStatus";
 import { BlacklistCache, BlacklistEntry } from "./Blacklist";
 
 import { EventEmitter } from "node:events";
@@ -190,11 +190,47 @@ export class FennecClient {
 
 
    /**
+    * 📰 set an application's application statistics' status
+    *
+    * 🔑 only `discord-fennec-bot`'s api key can use this endpoint, trying to use any other api key will result in a thrown `Error`
+    * @param id 🆔 id of the application to set its application statistics' status
+    * @param at 🗓️ date of when this application's application statistics' status was set
+    * @param name 🏷️ the type of `ApplicationStatisticsStatusName`
+    * @param message 📰 message to show when the `name` is being set to `ApplicationStatisticsStatusName.Offline` - required only if the `name` parameter is `ApplicationStatisticsStatusName.Offline`: must be <= 4000 characters in length
+    */
+   async setApplicationStatusApplicationStatisticsStatus(id: string, at: Date, name: ApplicationStatisticsStatusName, message?: string): Promise<void>;
+
+
+   /**
     * 📣 get this application's announcement
     *
     * ⌚ since this checks the `.#announcementCache`, it may be outdated by 15 minutes
     */
    getAnnouncement(): Announcement;
+
+
+   /**
+    * 📰 set an application's announcement
+    *
+    * 🔑 only `discord-fennec-bot`'s api key can use this endpoint, trying to use any other api key will result in a thrown `Error`
+    * @param id 🆔 id of the application's announcement to set
+    * @param at 🗓️ date of when this application's announcement was set
+    * @param message 📋 contents of this application's announcement: must be <= 4000 characters in length
+    * @param expiresAt ⌚ date of when this application's announcement expires
+    */
+   async setAnnouncement(id: string, at: Date, message: string, expiresAt?: Date): Promise<void>;
+
+
+   /**
+    * 🗑️ delete an application's announcement
+    *
+    * 📣 be careful about the return type! if `undefined` is returned, that means that the application didn't have an announcement set~
+    *
+    * 🔑 only `discord-fennec-bot`'s api key can use this endpoint, trying to use any other api key will result in a thrown `Error`
+    * @param id 🆔 id of the application's announcement to delete
+    * @returns ❓ when `undefined` is returned, that means that the application didn't have an announcement set
+    */
+   async deleteAnnouncement(id: string): Promise<undefined | void>;
 
 
    /**

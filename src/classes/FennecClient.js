@@ -399,6 +399,38 @@ module.exports = class FennecClient {
    };
 
 
+   async setApplicationStatusApplicationStatisticsStatus(id, at, name, message) {
+      // client not initialised
+      if (!this.#initialised)
+         throw this.#notInitialisedError;
+
+      // message too long
+      if (message.length > 4000)
+         throw new Error(`🚫 message argument for FennecClient.setApplicationStatusApplicationStatisticsStatus() too long`);
+
+      // request body
+      const body = JSON.stringify({
+         id,
+         at: at.getTime(),
+         ...message
+            ? { message }
+            : {},
+         name
+      });
+
+      // set application status' application statistics' status
+      const response = await this.#sendRequest(Methods.Post, Routes.ApplicationStatusApplicationStatisticsStatus, body);
+
+      // can't use this endpoint
+      if (response.status === HTTPStatusCodes.Forbidden)
+         throw new Error(`🚫 insufficient permissions to use FennecClient.setApplicationStatusApplicationStatisticsStatus()`);
+
+      // other error
+      else if (response.status === HTTPStatusCodes.InternalServerError)
+         throw new Error(`🚫 error at FennecClient.setApplicationStatusApplicationStatisticsStatus()\n\n${response.data}`);
+   };
+
+
    getAnnouncement() {
       // client not initialised
       if (!this.#initialised)
@@ -407,6 +439,57 @@ module.exports = class FennecClient {
       // return announcement data
       const { announcement } = this.#announcementCache;
       return announcement;
+   };
+
+
+   async setAnnouncement(id, at, message, expiresAt) {
+      // client not initialised
+      if (!this.#initialised)
+         throw this.#notInitialisedError;
+
+      // message too long
+      if (message.length > 4000)
+         throw new Error(`🚫 message argument for FennecClient.setApplicationStatusApplicationStatisticsStatus() too long`);
+
+      // request body
+      const body = JSON.stringify({
+         id,
+         at: at.getTime(),
+         message,
+         delete: expiresAt?.getTime()
+      });
+
+      // set application status' application statistics' status
+      const response = await this.#sendRequest(Methods.Post, Routes.Announcement, body);
+
+      // can't use this endpoint
+      if (response.status === HTTPStatusCodes.Forbidden)
+         throw new Error(`🚫 insufficient permissions to use FennecClient.setAnnouncement()`);
+
+      // other error
+      else if (response.status === HTTPStatusCodes.InternalServerError)
+         throw new Error(`🚫 error at FennecClient.setAnnouncement()\n\n${response.data}`);
+   };
+
+
+   async deleteAnnouncement(id) {
+      // client not initialised
+      if (!this.#initialised)
+         throw this.#notInitialisedError;
+
+      // set application status' application statistics' status
+      const response = await this.#sendRequest(Methods.Delete, `${Routes.Announcement}?id=${id}`);
+
+      // can't use this endpoint
+      if (response.status === HTTPStatusCodes.Forbidden)
+         throw new Error(`🚫 insufficient permissions to use FennecClient.deleteAnnouncement()`);
+
+      else if (response.status === HTTPStatusCodes.NotFound)
+         return undefined;
+
+      // other error
+      else if (response.status === HTTPStatusCodes.InternalServerError)
+         throw new Error(`🚫 error at FennecClient.deleteAnnouncement()\n\n${response.data}`);
    };
 
 
