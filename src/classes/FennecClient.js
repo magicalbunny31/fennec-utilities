@@ -405,7 +405,7 @@ module.exports = class FennecClient {
          throw this.#notInitialisedError;
 
       // message too long
-      if (message.length > 4000)
+      if (message && message.length > 4000)
          throw new Error(`🚫 message argument for FennecClient.setApplicationStatusApplicationStatisticsStatus() too long`);
 
       // request body
