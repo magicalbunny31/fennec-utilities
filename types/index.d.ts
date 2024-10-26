@@ -224,13 +224,13 @@ export class FennecClient {
    /**
     * 🗑️ delete an application's announcement
     *
-    * 📣 be careful about the return type! if `undefined` is returned, that means that the application didn't have an announcement set~
+    * 📣 be careful about the return type! if `null` is returned, that means that the application didn't have an announcement set~
     *
     * 🔑 only `discord-fennec-bot`'s api key can use this endpoint, trying to use any other api key will result in a thrown `Error`
     * @param id 🆔 id of the application's announcement to delete
-    * @returns ❓ when `undefined` is returned, that means that the application didn't have an announcement set
+    * @returns ❓ when `null` is returned, that means that the application didn't have an announcement set
     */
-   async deleteAnnouncement(id: string): Promise<undefined | void>;
+   async deleteAnnouncement(id: string): Promise<null | void>;
 
 
    /**

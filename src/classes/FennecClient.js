@@ -485,7 +485,7 @@ module.exports = class FennecClient {
          throw new Error(`🚫 insufficient permissions to use FennecClient.deleteAnnouncement()`);
 
       else if (response.status === HTTPStatusCodes.NotFound)
-         return undefined;
+         return null;
 
       // other error
       else if (response.status === HTTPStatusCodes.InternalServerError)
