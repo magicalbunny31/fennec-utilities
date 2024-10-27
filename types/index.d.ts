@@ -27,6 +27,9 @@ export class FennecClient {
    private fennecWorker: FennecClientInit;
 
 
+   private process: number;
+
+
    private fennecCloudRun: FennecClientInit;
 
 
@@ -51,9 +54,10 @@ export class FennecClient {
    /**
     * 💻 `fennec-utilities`
     * @param fennecWorker ☁️ options for `fennec-worker`
+    * @param process 🆔 the shard id this process is managing
     * @param fennecCloudRun ☁️ options for `fennec-cloud-run`
     */
-   constructor(fennecWorker: FennecClientInit, fennecCloudRun?: FennecClientInit);
+   constructor(fennecWorker: FennecClientInit, process?: number = 0, fennecCloudRun?: FennecClientInit);
 
 
    private async sendRequest(method: string, route: string, body: unknown): Promise<unknown>;

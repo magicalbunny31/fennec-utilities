@@ -37,6 +37,7 @@ module.exports = class FennecClient {
 
 
    #fennecWorker;
+   #process;
    #fennecCloudRun;
    #initialised = false;
    #notInitialisedError = new Error(`🚫 class FennecClient method #initialise() not run yet`);
@@ -49,13 +50,14 @@ module.exports = class FennecClient {
    cloudRun = new EventEmitter();
 
 
-   constructor(fennecWorker, fennecCloudRun) {
+   constructor(fennecWorker, process = 0, fennecCloudRun) {
       // missing required arguments
       if (!fennecWorker)
-         throw new Error(`🚫 missing required arguments \`fennecWorker\` on class FennecClient instantiation`);
+         throw new Error(`🚫 missing required argument \`fennecWorker\` on class FennecClient instantiation`);
 
       // set private attributes
       this.#fennecWorker   = fennecWorker;
+      this.#process        = process;
       this.#fennecCloudRun = fennecCloudRun;
    };
 
@@ -126,7 +128,7 @@ module.exports = class FennecClient {
 
 
    async #updateOnlineStatus() {
-      await this.#sendRequest(Methods.Post, Routes.UpdateOnlineStatus);
+      await this.#sendRequest(Methods.Post, `${Routes.UpdateOnlineStatus}?process=${this.#process}`);
    };
 
 
