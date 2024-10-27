@@ -134,37 +134,52 @@ module.exports = class FennecClient {
 
 
    #initialiseWebsocket() {
-      this.#websocket = new WebSocket(`${this.#fennecCloudRun.baseUrl}?token=${encodeURIComponent(this.#fennecCloudRun.authorisation)}`);
+      const initialiseWebhook = () => {
+         this.#websocket = new WebSocket(`${this.#fennecCloudRun.baseUrl}?token=${encodeURIComponent(this.#fennecCloudRun.authorisation)}`);
 
-      this.#websocket.on(`open`, () => {
-         clearTimeout(this.#websocketHeartbeat);
-         this.#websocketHeartbeat = setTimeout(
-            () => this.#websocket.terminate(),
-            0.5 * 6 * 1000 // websocket server interval
-               + 1000      // latency
-         );
-      });
+         this.#websocket.on(`open`, () => {
+            clearTimeout(this.#websocketHeartbeat);
+            this.#websocketHeartbeat = setTimeout(
+               () => {
+                  this.#websocket.terminate();
+                  throw new Error(`🚫 class FennecClient websocket to fennec-cloud-run's heartbeat timer was ended and connection has been terminated`);
+               },
+               0.5 * 60 * 1000 // websocket server interval
+                  +   1 * 1000 // latency
+            );
+         });
 
-      this.#websocket.on(`ping`, () => {
-         clearTimeout(this.#websocketHeartbeat);
-         this.#websocketHeartbeat = setTimeout(
-            () => this.#websocket.terminate(),
-            0.5 * 6 * 1000 // websocket server interval
-               + 1000      // latency
-         );
-      });
+         this.#websocket.on(`ping`, () => {
+            clearTimeout(this.#websocketHeartbeat);
+            this.#websocketHeartbeat = setTimeout(
+               () => {
+                  this.#websocket.terminate();
+                  throw new Error(`🚫 class FennecClient websocket to fennec-cloud-run's heartbeat timer was ended and connection has been terminated`);
+               },
+               0.5 * 60 * 1000 // websocket server interval
+                  +   1 * 1000 // latency
+            );
+         });
 
-      this.#websocket.on(`error`, error => {
-         console.error(`🚫 error at FennecClient.#websocket`);
-         throw error;
-      });
+         this.#websocket.on(`error`, error => {
+            console.error(`🚫 error at FennecClient.#websocket`);
+            throw error;
+         });
 
-      this.#websocket.on(`message`, rawData => {
-         const data = JSON.parse(rawData);
-         this.cloudRun.emit(`data`, data);
-      });
+         this.#websocket.on(`message`, rawData => {
+            const data = JSON.parse(rawData);
+            this.cloudRun.emit(`data`, data);
+         });
 
-      this.#websocket.on(`close`, () => clearTimeout(this.#websocketHeartbeat));
+         this.#websocket.on(`close`, () => {
+            clearTimeout(this.#websocketHeartbeat);
+            this.#websocket = initialiseWebhook(); // reconnect to the websocket by reinitialising the variables
+         });
+
+         return this.#websocket;
+      };
+
+      this.#websocket = initialiseWebhook();
    };
 
 
