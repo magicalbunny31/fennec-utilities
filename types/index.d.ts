@@ -46,6 +46,9 @@ export class FennecClient {
 
 
    private ws: typeof WebSocket;
+   
+
+   private websocketHeartbeat: ReturnType<typeof setInterval>;
 
 
    cloudRun: typeof EventEmitter;

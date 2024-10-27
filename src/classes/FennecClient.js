@@ -46,6 +46,7 @@ module.exports = class FennecClient {
    #announcementCache;
    #announcementUsersCache;
    #websocket;
+   #websocketHeartbeat;
 
    cloudRun = new EventEmitter();
 
@@ -135,6 +136,24 @@ module.exports = class FennecClient {
    #initialiseWebsocket() {
       this.#websocket = new WebSocket(`${this.#fennecCloudRun.baseUrl}?token=${encodeURIComponent(this.#fennecCloudRun.authorisation)}`);
 
+      this.#websocket.on(`open`, () => {
+         clearTimeout(this.#websocketHeartbeat);
+         this.#websocketHeartbeat = setTimeout(
+            () => this.#websocket.terminate(),
+            0.5 * 6 * 1000 // websocket server interval
+               + 1000      // latency
+         );
+      });
+
+      this.#websocket.on(`ping`, () => {
+         clearTimeout(this.#websocketHeartbeat);
+         this.#websocketHeartbeat = setTimeout(
+            () => this.#websocket.terminate(),
+            0.5 * 6 * 1000 // websocket server interval
+               + 1000      // latency
+         );
+      });
+
       this.#websocket.on(`error`, error => {
          console.error(`🚫 error at FennecClient.#websocket`);
          throw error;
@@ -144,6 +163,8 @@ module.exports = class FennecClient {
          const data = JSON.parse(rawData);
          this.cloudRun.emit(`data`, data);
       });
+
+      this.#websocket.on(`close`, () => clearTimeout(this.#websocketHeartbeat));
    };
 
 
