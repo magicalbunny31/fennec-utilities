@@ -50,7 +50,7 @@ module.exports = class FennecClient {
    cloudRun = new EventEmitter();
 
 
-   constructor(fennecWorker, process = 0, fennecCloudRun) {
+   constructor(fennecWorker, process = `main`, fennecCloudRun) {
       // missing required arguments
       if (!fennecWorker)
          throw new Error(`🚫 missing required argument \`fennecWorker\` on class FennecClient instantiation`);
