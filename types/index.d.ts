@@ -1,4 +1,4 @@
-import { Announcement } from "./Announcement";
+import { Announcement, AnnouncementCache, AnnouncementUsersCache } from "./Announcement";
 import { ApplicationStatisticsStatus, ApplicationStatisticsStatusCache, ApplicationStatisticsStatusName } from "./ApplicationStatus";
 import { BlacklistCache, BlacklistEntry } from "./Blacklist";
 
@@ -46,6 +46,15 @@ export class FennecClient {
 
 
    private applicationStatusApplicationStatisticsStatusCache: ApplicationStatisticsStatusCache;
+
+
+   private announcementCache: AnnouncementCache;
+
+
+   private announcementUsersCache: AnnouncementUsersCache;
+
+
+   private websocket: typeof WebSocket;
    
 
    private websocketHeartbeat: ReturnType<typeof setInterval>;

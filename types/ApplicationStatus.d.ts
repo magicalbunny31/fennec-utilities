@@ -1,6 +1,12 @@
 export type ApplicationStatisticsStatusName = `online` | `offline`;
 
 
+export type ApplicationStatisticsStatusCache = {
+   applicationStatusApplicationStatisticsStatus: ApplicationStatisticsStatus?;
+   lastUpdatedAt: Date;
+};
+
+
 export type ApplicationStatisticsStatus = {
    /**
     * 🗓️ `Date` of when this `ApplicationStatus` was set
