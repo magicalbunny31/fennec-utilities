@@ -1,5 +1,5 @@
 import { Announcement } from "./Announcement";
-import { ApplicationStatisticsStatus, ApplicationStatisticsStatusName } from "./ApplicationStatus";
+import { ApplicationStatisticsStatus, ApplicationStatisticsStatusCache, ApplicationStatisticsStatusName } from "./ApplicationStatus";
 import { BlacklistCache, BlacklistEntry } from "./Blacklist";
 
 import { EventEmitter } from "node:events";
@@ -45,7 +45,7 @@ export class FennecClient {
    private blacklistCache: BlacklistCache;
 
 
-   private ws: typeof WebSocket;
+   private applicationStatusApplicationStatisticsStatusCache: ApplicationStatisticsStatusCache;
    
 
    private websocketHeartbeat: ReturnType<typeof setInterval>;
@@ -67,6 +67,9 @@ export class FennecClient {
 
 
    private async updateBlacklistCache(): Promise<void>;
+
+
+   private async updateApplicationStatusApplicationStatisticsStatusCache(): Promise<void>;
 
 
    private async updateAnnouncementCache(): Promise<void>;
@@ -193,7 +196,7 @@ export class FennecClient {
     * ❓ the return value will be `undefined` if this app doesn't have an `application-status`
     * @returns 📄 the `application-status`' `application-statistics`' `name` field
     */
-   async getApplicationStatusApplicationStatisticsStatus(): Promise<ApplicationStatisticsStatus?>;
+   getApplicationStatusApplicationStatisticsStatus(): ApplicationStatisticsStatus?;
 
 
    /**

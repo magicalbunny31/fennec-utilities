@@ -43,6 +43,7 @@ module.exports = class FennecClient {
    #notInitialisedError = new Error(`🚫 class FennecClient method #initialise() not run yet`);
    #noFennecCloudRunArgs = new Error(`🚫 class FennecClient fennecCloudRun arguments are required to use this method`);
    #blacklistCache;
+   #applicationStatusApplicationStatisticsStatusCache;
    #announcementCache;
    #announcementUsersCache;
    #websocket;
@@ -90,6 +91,27 @@ module.exports = class FennecClient {
       // update the cache
       this.#blacklistCache = {
          blacklist: response.data,
+         lastUpdatedAt: new Date()
+      };
+   };
+
+
+   async #updateApplicationStatusApplicationStatisticsStatusCache() {
+      // get application status data
+      const response = await this.#sendRequest(Methods.Get, Routes.ApplicationStatusApplicationStatisticsStatus);
+
+      this.#applicationStatusApplicationStatisticsStatusCache = {
+         applicationStatusApplicationStatisticsStatus: response.status === HTTPStatusCodes.NotFound
+            ? undefined
+            : {
+               name: response.data.name,
+               ...response.data.message
+                  ? {
+                     message: response.data.message
+                  }
+                  : {},
+               at: new Date(Date.parse(response.data.at))
+            },
          lastUpdatedAt: new Date()
       };
    };
@@ -191,6 +213,7 @@ module.exports = class FennecClient {
       // methods to run
       const intervalFunction = async () => {
          await this.#updateBlacklistCache();
+         await this.#updateApplicationStatusApplicationStatisticsStatusCache();
          await this.#updateAnnouncementCache();
          await this.#updateAnnouncementUsersCache();
          await this.#updateOnlineStatus();
@@ -412,28 +435,14 @@ module.exports = class FennecClient {
    };
 
 
-   async getApplicationStatusApplicationStatisticsStatus() {
+   getApplicationStatusApplicationStatisticsStatus() {
       // client not initialised
       if (!this.#initialised)
          throw this.#notInitialisedError;
 
-      // get application status data
-      const response = await this.#sendRequest(Methods.Get, Routes.ApplicationStatusApplicationStatisticsStatus);
-
-      // no status
-      if (response.status === HTTPStatusCodes.NotFound)
-         return undefined;
-
       // return application status data
-      return {
-         name: response.data.name,
-         ...response.data.message
-            ? {
-               message: response.data.message
-            }
-            : {},
-         at: new Date(Date.parse(response.data.at))
-      };
+      const { applicationStatusApplicationStatisticsStatus } = this.#applicationStatusApplicationStatisticsStatusCache;
+      return applicationStatusApplicationStatisticsStatus;
    };
 
 
