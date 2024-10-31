@@ -1,4 +1,5 @@
 const { EventEmitter } = require("node:events");
+const { wait } = require("@magicalbunny31/pawesome-utility-stuffs");
 const { setIntervalAsync } = require("set-interval-async");
 const WebSocket = require("ws");
 
@@ -159,19 +160,12 @@ module.exports = class FennecClient {
       const initialiseWebhook = () => {
          this.#websocket = new WebSocket(`${this.#fennecCloudRun.baseUrl}?token=${encodeURIComponent(this.#fennecCloudRun.authorisation)}`);
 
-         this.#websocket.on(`open`, () => {
-            clearTimeout(this.#websocketHeartbeat);
-            this.#websocketHeartbeat = setTimeout(
-               () => {
-                  this.#websocket.terminate();
-                  throw new Error(`🚫 class FennecClient websocket to fennec-cloud-run's heartbeat timer was ended and connection has been terminated`);
-               },
-               0.5 * 60 * 1000 // websocket server interval
-                  +   1 * 1000 // latency
-            );
-         });
+         const setHeartbeat = async () => {
+            if (this.#websocket.readyState === this.#websocket.CONNECTING) {
+               await wait(250);
+               return await setHeartbeat();
+            };
 
-         this.#websocket.on(`ping`, () => {
             clearTimeout(this.#websocketHeartbeat);
             this.#websocketHeartbeat = setTimeout(
                () => {
@@ -181,7 +175,15 @@ module.exports = class FennecClient {
                0.5 * 60 * 1000 // websocket server interval
                   +   1 * 1000 // latency
             );
-         });
+         };
+
+         this.#websocket.on(`open`, async () =>
+            await setHeartbeat()
+         );
+
+         this.#websocket.on(`ping`, async () =>
+            await setHeartbeat()
+         );
 
          this.#websocket.on(`error`, error => {
             console.error(`🚫 error at FennecClient.#websocket`);
