@@ -158,7 +158,7 @@ module.exports = class FennecClient {
 
    #initialiseWebsocket() {
       const initialiseWebhook = () => {
-         this.#websocket = new WebSocket(`${this.#fennecCloudRun.baseUrl}?token=${encodeURIComponent(this.#fennecCloudRun.authorisation)}`);
+         this.#websocket = new WebSocket(`${this.#fennecCloudRun.baseUrl}?token=${encodeURIComponent(this.#fennecCloudRun.authorisation)}`, { rejectUnauthorized: false });
 
          const setHeartbeat = async () => {
             if (this.#websocket.readyState === this.#websocket.CONNECTING) {
