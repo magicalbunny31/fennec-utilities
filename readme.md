@@ -1,9 +1,14 @@
 # 💻 fennec-utilities
-💻 utilities package for interacting with fennec
+💻 utility package for interacting with the `fennec-utilities` api
 <br/>
 that's it ✨
 <br/>
 🐰🦊🐺🦌
+
+
+## 🏡 find out more about fennec 💻
+
+🔗 https://nuzzles.dev/dev/fennec
 
 
 ## 💻 installation
@@ -20,6 +25,7 @@ yarn add https://github.com/magicalbunny31/fennec-utilities
 
 
 ## why is this public? 📔
+
 ☁️ mostly so i can download this repository easily~
 <br/>
 📔 as this all relates to me, i (probably) won't add any documentation
