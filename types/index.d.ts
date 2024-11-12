@@ -21,16 +21,63 @@ type FennecClientInit = {
 };
 
 
+type FennecOptions = {
+   /**
+    * 💻 which `fennecProcess` manages this app
+    *
+    * 🏷️ when this value is a `string`: the expected value is the name of the `fennecProcess`, such as "`uwu-projects`"
+    *
+    * 🚫 when this value is `false`: this app is assumed to not be running on a server with a `fennecProcess`, such as [cloudflare workers](https://developers.cloudflare.com/workers/)
+    */
+   fennecProcess: string | false;
+
+   /**
+    * ☁️ options for `fennec-utilities`
+    */
+   fennecUtilities: FennecClientInit;
+
+   /**
+    * ☁️ options for `fennec-websocket`, fennec 💻's way to interact with other fennec processes
+    *
+    * ❗ this option is **ONLY** required for fennec 💻 apps - do not specify this option if this app is **NOT** fennec 💻
+    */
+   fennecWebsocket?: FennecClientInit;
+
+   /**
+    * 🆔 the shard id this process is managing
+    */
+   process?: (number | string) = `main`;
+
+   /**
+    * 📣 whether to automatically update the announcement cache and announcement users cache on `FennecClient.initialise()`
+    * @default true
+    */
+   useAnnouncement?: boolean;
+
+   /**
+    * 📋 whether to automatically update the application status' application statistics' status cache on `FennecClient.initialise()`
+    * @default true
+    */
+   useApplicationStatusApplicationStatisticsStatus?: boolean;
+
+   /**
+    * 📃 whether to automatically update the blacklist cache on `FennecClient.initialise()`
+    * @default true
+    */
+   useBlacklist?: boolean;
+
+   /**
+    * 💤 whether to automatically update this app's online status on `FennecClient.initialise()`
+    * @default true
+    */
+   useOnlineStatus?: boolean;
+};
+
+
 export class FennecClient {
 
 
-   private fennecWorker: FennecClientInit;
-
-
-   private process: number;
-
-
-   private fennecCloudRun: FennecClientInit;
+   private fennecOptions: FennecOptions;
 
 
    private initialised: boolean;
@@ -39,19 +86,28 @@ export class FennecClient {
    private notInitialisedError: Error;
 
 
-   private noFennecCloudRunArgs: Error;
+   private noFennecWebsocketArgs: Error;
 
 
-   private blacklistCache: BlacklistCache;
+   private blacklistCache: BlacklistCache?;
 
 
-   private applicationStatusApplicationStatisticsStatusCache: ApplicationStatisticsStatusCache;
+   private notUsingBlacklistCacheError(method: string): Error;
 
 
-   private announcementCache: AnnouncementCache;
+   private applicationStatusApplicationStatisticsStatusCache: ApplicationStatisticsStatusCache?;
 
 
-   private announcementUsersCache: AnnouncementUsersCache;
+   private notUsingApplicationStatusApplicationStatisticsStatusCacheError(method: string): Error;
+
+
+   private announcementCache: AnnouncementCache?;
+
+
+   private announcementUsersCache: AnnouncementUsersCache?;
+
+
+   private notUsingAnnouncementCache(method: string): Error;
 
 
    private websocket: typeof WebSocket;
@@ -60,16 +116,14 @@ export class FennecClient {
    private websocketHeartbeat: ReturnType<typeof setInterval>;
 
 
-   cloudRun: typeof EventEmitter;
+   Websocket: typeof EventEmitter;
 
 
    /**
-    * 💻 `fennec-utilities`
-    * @param fennecWorker ☁️ options for `fennec-worker`
-    * @param process 🆔 the shard id this process is managing
-    * @param fennecCloudRun ☁️ options for `fennec-cloud-run`
+    * 💻 `fennec-utilities`'s `FennecClient`
+    * @param options 🔧 options for this `FennecClient`
     */
-   constructor(fennecWorker: FennecClientInit, process?: string = `main`, fennecCloudRun?: FennecClientInit);
+   constructor(options: FennecOptions);
 
 
    private async sendRequest(method: string, route: string, body: unknown): Promise<unknown>;
@@ -94,24 +148,26 @@ export class FennecClient {
 
 
    /**
-    * 🏳️ initialise the `FennecClient`: must be run once before running other methods
+    * 🏳️ initialise the `FennecClient`: this must be run once before running other methods
+    * 
+    * 💤 when the `FennecClient` isn't initialised, it is the same as disabling the `FennecClient`'s functionality: every method that is run will instead not do anything and will output `console.error(...)`
     */
    async initialise(): Promise<void>;
 
 
    /**
-    * 🏓 check if another `FennecClient` is listening to `fennec-cloud-run`
+    * 🏓 check if another `FennecClient` is listening to `fennec-websocket`
     *
     * 📣 if `undefined` was returned, it may have interfered with a request between other `FennecClient`s and should not be trusted
-    * @param id 🏷️ target `FennecClient` id (type) to check if is listening to `fennec-cloud-run`
+    * @param id 🏷️ target `FennecClient` id (type) to check if is listening to `fennec-websocket`
     */
    isConnected(id: string): Promise<boolean?>;
 
 
    /**
-    * 📤 send data to another `FennecClient` listening to `fennec-cloud-run`
+    * 📤 send data to another `FennecClient` listening to `fennec-websocket`
     *
-    * 🏓 before running this method, the target `FennecClient` should be checked if it is listening to `fennec-cloud-run` with `FennecClient.isConnected()`
+    * 🏓 before running this method, the target `FennecClient` should be checked if it is listening to `fennec-websocket` with `FennecClient.isConnected()`
     * @param toId 🏷️ target `FennecClient` id (type) to send data to
     * @param data 📦 data to send to this `FennecClient`
     */
@@ -190,7 +246,7 @@ export class FennecClient {
    /**
     * 📰 post an error log embed to the app's application-status thread
     * @param error 📋 the error that occurred
-    * @param source 🏷️ where this error occurred - this string should be formatted as neither `fennec-utilities` nor `fennec-worker` will format this as inlineCode for you (do it yourself lol)
+    * @param source 🏷️ where this error occurred - this string should be formatted as `fennec-utilities` won't format this as inlineCode for you (do it yourself lol)
     * @param at 🗓️ date of when this error occurred
     * @param interactionId 💬 the id of the interaction of which this error originated from
     */

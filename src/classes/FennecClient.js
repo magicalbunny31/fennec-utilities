@@ -37,40 +37,39 @@ const Routes = {
 module.exports = class FennecClient {
 
 
-   #fennecWorker;
-   #process;
-   #fennecCloudRun;
+   #fennecOptions;
    #initialised = false;
-   #notInitialisedError = new Error(`🚫 class FennecClient method #initialise() not run yet`);
-   #noFennecCloudRunArgs = new Error(`🚫 class FennecClient fennecCloudRun arguments are required to use this method`);
+   #notInitialisedError = new Error(`🚫 FennecClient.initialise() not run yet`);
+   #noFennecWebsocketArgs = new Error(`🚫 FennecClient fennecWebsocket arguments are required to use this method`);
    #blacklistCache;
+   #notUsingBlacklistCacheError = method => new Error(`🚫 FennecClient.${method}() cannot be used as blacklist cache is set to not update`);
    #applicationStatusApplicationStatisticsStatusCache;
+   #notUsingApplicationStatusApplicationStatisticsStatusCacheError = method => new Error(`🚫 FennecClient.${method}() cannot be used as application status' application statistics' status cache is set to not update`);
    #announcementCache;
    #announcementUsersCache;
+   #notUsingAnnouncementCache = method => new Error(`🚫 FennecClient.${method}() cannot be used as announcement cache is set to not update`);
    #websocket;
    #websocketHeartbeat;
 
-   cloudRun = new EventEmitter();
+   Websocket = new EventEmitter();
 
 
-   constructor(fennecWorker, process = `main`, fennecCloudRun) {
+   constructor(options) {
       // missing required arguments
-      if (!fennecWorker)
-         throw new Error(`🚫 missing required argument \`fennecWorker\` on class FennecClient instantiation`);
+      if (!(`fennecUtilities` in options && `fennecProcess` in options))
+         throw new Error(`🚫 missing required argument(s) \`fennecUtilities\` and/or \`fennecProcess\` on FennecClient instantiation`);
 
       // set private attributes
-      this.#fennecWorker   = fennecWorker;
-      this.#process        = process;
-      this.#fennecCloudRun = fennecCloudRun;
+      this.#fennecOptions = options;
    };
 
 
    async #sendRequest(method, route, body) {
       // send response
-      const response = await fetch(`${this.#fennecWorker.baseUrl}${route}`, {
+      const response = await fetch(`${this.#fennecOptions.fennecUtilities.baseUrl}${route}`, {
          method,
          headers: {
-            Authorization: this.#fennecWorker.authorisation,
+            Authorization: this.#fennecOptions.fennecUtilities.authorisation,
             ...body
                ? { "Content-Type": `application-json` }
                : {}
@@ -86,6 +85,11 @@ module.exports = class FennecClient {
 
 
    async #updateBlacklistCache() {
+      // don't update this cache
+      const useBlacklist = this.#fennecOptions.useBlacklist ?? true;
+      if (!useBlacklist)
+         return;
+
       // get blacklisted users
       const response = await this.#sendRequest(Methods.Get, Routes.Blacklist);
 
@@ -94,10 +98,15 @@ module.exports = class FennecClient {
          blacklist: response.data,
          lastUpdatedAt: new Date()
       };
-   };
+};
 
 
    async #updateApplicationStatusApplicationStatisticsStatusCache() {
+      // don't update this cache
+      const useApplicationStatusApplicationStatisticsStatus = this.#fennecOptions.useApplicationStatusApplicationStatisticsStatus ?? true;
+      if (!useApplicationStatusApplicationStatisticsStatus)
+         return;
+
       // get application status data
       const response = await this.#sendRequest(Methods.Get, Routes.ApplicationStatusApplicationStatisticsStatus);
 
@@ -119,6 +128,11 @@ module.exports = class FennecClient {
 
 
    async #updateAnnouncementCache() {
+      // don't update this cache
+      const useAnnouncement = this.#fennecOptions.useAnnouncement ?? true;
+      if (!useAnnouncement)
+         return;
+
       // get announcement data
       const response = await this.#sendRequest(Methods.Get, Routes.Announcement);
 
@@ -141,6 +155,11 @@ module.exports = class FennecClient {
 
 
    async #updateAnnouncementUsersCache() {
+      // don't update this cache
+      const useAnnouncement = this.#fennecOptions.useAnnouncement ?? true;
+      if (!useAnnouncement)
+         return;
+
       // get announcement users data
       const response = await this.#sendRequest(Methods.Get, Routes.AnnouncementUsers);
 
@@ -152,13 +171,28 @@ module.exports = class FennecClient {
 
 
    async #updateOnlineStatus() {
-      await this.#sendRequest(Methods.Post, `${Routes.UpdateOnlineStatus}?process=${this.#process}`);
+      // don't update this cache
+      const useOnlineStatus = this.#fennecOptions.useOnlineStatus ?? true;
+      if (!useOnlineStatus)
+         return;
+
+      // update this app's online status
+      await this.#sendRequest(Methods.Post,
+         [
+            Routes.UpdateOnlineStatus,
+            `?process=${this.#fennecOptions.process}`,
+            ...this.#fennecOptions.fennecProcess
+               ? [ `&fennecProcess=${this.#fennecOptions.fennecProcess}` ]
+               : []
+         ]
+            .join(``)
+      );
    };
 
 
    #initialiseWebsocket() {
       const initialiseWebhook = () => {
-         this.#websocket = new WebSocket(`${this.#fennecCloudRun.baseUrl}?token=${encodeURIComponent(this.#fennecCloudRun.authorisation)}`, { rejectUnauthorized: false });
+         this.#websocket = new WebSocket(`${this.#fennecOptions.fennecWebsocket.baseUrl}?token=${encodeURIComponent(this.#fennecOptions.fennecWebsocket.authorisation)}`, { rejectUnauthorized: false });
 
          const setHeartbeat = async () => {
             if (this.#websocket.readyState === this.#websocket.CONNECTING) {
@@ -170,7 +204,7 @@ module.exports = class FennecClient {
             this.#websocketHeartbeat = setTimeout(
                () => {
                   this.#websocket.terminate();
-                  throw new Error(`🚫 class FennecClient websocket to fennec-cloud-run's heartbeat timer was ended and connection has been terminated`);
+                  throw new Error(`🚫 FennecClient websocket to fennec-websocket's heartbeat timer was ended and connection has been terminated`);
                },
                0.5 * 60 * 1000 // websocket server interval
                   +   1 * 1000 // latency
@@ -192,7 +226,7 @@ module.exports = class FennecClient {
 
          this.#websocket.on(`message`, rawData => {
             const data = JSON.parse(rawData);
-            this.cloudRun.emit(`data`, data);
+            this.Websocket.emit(`data`, data);
          });
 
          this.#websocket.on(`close`, () => {
@@ -210,7 +244,7 @@ module.exports = class FennecClient {
    async initialise() {
       // client already initialised
       if (this.#initialised)
-         throw new Error(`🚫 class FennecClient method #initialise() has already been run`);
+         throw new Error(`🚫 FennecClient.initialise() has already been run`);
 
       // methods to run
       const intervalFunction = async () => {
@@ -228,8 +262,8 @@ module.exports = class FennecClient {
       const fifteenMinutes = 15 * 60 * 1000;
       setIntervalAsync(intervalFunction, fifteenMinutes);
 
-      // set up the websocket client to fennec-cloud-run
-      if (this.#fennecCloudRun)
+      // set up the websocket client to fennec-websocket
+      if (this.#fennecOptions.fennecWebsocket)
          this.#initialiseWebsocket();
 
       // client initialised
@@ -238,13 +272,13 @@ module.exports = class FennecClient {
 
 
    isConnected(id) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
 
-      // #fennecCloudRun options were not specified
-      if (!this.#fennecCloudRun)
-         throw this.#noFennecCloudRunArgs;
+      // #fennecWebsocket options were not specified
+      if (!this.#fennecOptions.fennecWebsocket)
+         throw this.#noFennecWebsocketArgs;
 
       // check if a client is connected
       return new Promise((resolve, reject) => {
@@ -262,13 +296,13 @@ module.exports = class FennecClient {
 
 
    sendData(toId, data) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
 
-      // #fennecCloudRun options were not specified
-      if (!this.#fennecCloudRun)
-         throw this.#noFennecCloudRunArgs;
+      // #fennecWebsocket options were not specified
+      if (!this.#fennecOptions.fennecWebsocket)
+         throw this.#noFennecWebsocketArgs;
 
       // send data
       const dataToSend = JSON.stringify({ toId, data });
@@ -277,9 +311,14 @@ module.exports = class FennecClient {
 
 
    listBlacklist() {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
+
+      // client isn't updating this cache
+      const useBlacklist = this.#fennecOptions.useBlacklist ?? true;
+      if (!useBlacklist)
+         throw this.#notUsingBlacklistCacheError(`listBlacklist`);
 
       // return the blacklist cache
       const { blacklist } = this.#blacklistCache;
@@ -288,9 +327,14 @@ module.exports = class FennecClient {
 
 
    isOnBlacklist(userId) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
+
+      // client isn't updating this cache
+      const useBlacklist = this.#fennecOptions.useBlacklist ?? true;
+      if (!useBlacklist)
+         throw this.#notUsingBlacklistCacheError(`isOnBlacklist`);
 
       // check if this userId is on the blacklist cache
       const { blacklist } = this.#blacklistCache;
@@ -299,9 +343,9 @@ module.exports = class FennecClient {
 
 
    async getUserBlacklistInfo(userId) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
 
       // get blacklist data about this userId
       const response = await this.#sendRequest(Methods.Get, Routes.BlacklistUser(userId));
@@ -325,9 +369,14 @@ module.exports = class FennecClient {
 
 
    async addToBlacklist(userId, byUserId, at, reason, expiresAt) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
+
+      // client isn't updating this cache
+      const useBlacklist = this.#fennecOptions.useBlacklist ?? true;
+      if (!useBlacklist)
+         throw this.#notUsingBlacklistCacheError(`addToBlacklist`);
 
       // reason too long
       if (reason.length > 1024)
@@ -366,9 +415,14 @@ module.exports = class FennecClient {
 
 
    async removeFromBlacklist(userId) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
+
+      // client isn't updating this cache
+      const useBlacklist = this.#fennecOptions.useBlacklist ?? true;
+      if (!useBlacklist)
+         throw this.#notUsingBlacklistCacheError(`removeFromBlacklist`);
 
       // remove from blacklist
       const response = await this.#sendRequest(Methods.Delete, Routes.BlacklistUser(userId));
@@ -387,9 +441,9 @@ module.exports = class FennecClient {
 
 
    async getGuildInvite() {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
 
       // get guild invite
       const guildInviteData = await this.#sendRequest(Methods.Get, Routes.GuildInvite);
@@ -400,9 +454,9 @@ module.exports = class FennecClient {
 
 
    async postLog(content, at) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
 
       // request body
       const body = JSON.stringify({
@@ -416,9 +470,9 @@ module.exports = class FennecClient {
 
 
    async postErrorLog(error, source, at, interactionId) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
 
       // request body
       const body = JSON.stringify({
@@ -438,9 +492,14 @@ module.exports = class FennecClient {
 
 
    getApplicationStatusApplicationStatisticsStatus() {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
+
+      // client isn't updating this cache
+      const useApplicationStatusApplicationStatisticsStatus = this.#fennecOptions.useApplicationStatusApplicationStatisticsStatus ?? true;
+      if (!useApplicationStatusApplicationStatisticsStatus)
+         throw this.#notUsingApplicationStatusApplicationStatisticsStatusCacheError(`getApplicationStatusApplicationStatisticsStatus`);
 
       // return application status data
       const { applicationStatusApplicationStatisticsStatus } = this.#applicationStatusApplicationStatisticsStatusCache;
@@ -449,9 +508,9 @@ module.exports = class FennecClient {
 
 
    async setApplicationStatusApplicationStatisticsStatus(id, at, name, message) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
 
       // message too long
       if (message && message.length > 4000)
@@ -481,9 +540,14 @@ module.exports = class FennecClient {
 
 
    getAnnouncement() {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
+
+      // client isn't updating this cache
+      const useAnnouncement = this.#fennecOptions.useAnnouncement ?? true;
+      if (!useAnnouncement)
+         throw this.#notUsingAnnouncementCache(`getAnnouncement`);
 
       // return announcement data
       const { announcement } = this.#announcementCache;
@@ -492,9 +556,9 @@ module.exports = class FennecClient {
 
 
    async setAnnouncement(id, at, message, expiresAt) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
 
       // message too long
       if (message.length > 4000)
@@ -522,9 +586,9 @@ module.exports = class FennecClient {
 
 
    async deleteAnnouncement(id) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
 
       // set application status' application statistics' status
       const response = await this.#sendRequest(Methods.Delete, `${Routes.Announcement}?id=${id}`);
@@ -543,9 +607,9 @@ module.exports = class FennecClient {
 
 
    async setSeenAnnouncement(userId) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
 
       // no announcement set: don't set anything
       const response = await this.#sendRequest(Methods.Get, Routes.Announcement);
@@ -558,9 +622,14 @@ module.exports = class FennecClient {
 
 
    hasSeenAnnouncement(userId) {
-      // client not initialised
+      // client isn't initialised
       if (!this.#initialised)
-         throw this.#notInitialisedError;
+         return console.error(this.#notInitialisedError);
+
+      // client isn't updating this cache
+      const useAnnouncement = this.#fennecOptions.useAnnouncement ?? true;
+      if (!useAnnouncement)
+         throw this.#notUsingAnnouncementCache(`hasSeenAnnouncement`);
 
       // get announcement users
       const { users } = this.#announcementUsersCache;
