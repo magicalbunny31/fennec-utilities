@@ -116,7 +116,7 @@ export class FennecClient {
    private websocketHeartbeat: ReturnType<typeof setInterval>;
 
 
-   Websocket: typeof EventEmitter;
+   websocket: typeof EventEmitter;
 
 
    /**

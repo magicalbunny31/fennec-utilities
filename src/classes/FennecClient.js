@@ -51,7 +51,7 @@ module.exports = class FennecClient {
    #websocket;
    #websocketHeartbeat;
 
-   Websocket = new EventEmitter();
+   websocket = new EventEmitter();
 
 
    constructor(options) {
@@ -226,7 +226,7 @@ module.exports = class FennecClient {
 
          this.#websocket.on(`message`, rawData => {
             const data = JSON.parse(rawData);
-            this.Websocket.emit(`data`, data);
+            this.websocket.emit(`data`, data);
          });
 
          this.#websocket.on(`close`, () => {
