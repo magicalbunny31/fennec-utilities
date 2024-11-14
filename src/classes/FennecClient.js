@@ -180,7 +180,7 @@ module.exports = class FennecClient {
       await this.#sendRequest(Methods.Post,
          [
             Routes.UpdateOnlineStatus,
-            `?process=${this.#fennecOptions.process}`,
+            `?process=${this.#fennecOptions.process ?? `main`}`,
             ...this.#fennecOptions.fennecProcess
                ? [ `&fennecProcess=${this.#fennecOptions.fennecProcess}` ]
                : []
