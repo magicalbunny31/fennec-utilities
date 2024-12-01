@@ -65,11 +65,15 @@ module.exports = class FennecClient {
 
 
    async #sendRequest(method, route, body) {
+      // create basic authorisation
+      const basic = `${this.#fennecOptions.fennecUtilities.id}:${this.#fennecOptions.fennecUtilities.authorisation}`;
+      const encoded = Buffer.from(basic).toString(`base64`);
+
       // send response
       const response = await fetch(`${this.#fennecOptions.fennecUtilities.baseUrl}${route}`, {
          method,
          headers: {
-            Authorization: this.#fennecOptions.fennecUtilities.authorisation,
+            Authorization: `Basic ${encoded}`,
             ...body
                ? { "Content-Type": `application/json` }
                : {}

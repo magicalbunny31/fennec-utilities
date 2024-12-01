@@ -8,17 +8,25 @@ import { Interaction, Message } from "discord.js";
 import WebSocket from "ws";
 
 
-type FennecClientInit = {
+type FennecUtilities = {
    /**
     * 🌐 base url for requests
     */
    baseUrl: string;
 
    /**
+    * 🔑 id for requests
+    */
+   id: string;
+
+   /**
     * 🔑 api key for requests
     */
    authorisation: string;
 };
+
+
+type FennecWebsocket = Omit<FennecUtilities, "id">;
 
 
 type FennecOptions = {
@@ -34,14 +42,14 @@ type FennecOptions = {
    /**
     * ☁️ options for `fennec-utilities`
     */
-   fennecUtilities: FennecClientInit;
+   fennecUtilities: FennecUtilities;
 
    /**
     * ☁️ options for `fennec-websocket`, fennec 💻's way to interact with other fennec processes
     *
     * ❗ this option is **ONLY** required for fennec 💻 apps - do not specify this option if this app is **NOT** fennec 💻
     */
-   fennecWebsocket?: FennecClientInit;
+   fennecWebsocket?: FennecWebsocket;
 
    /**
     * 🆔 the shard id this process is managing
