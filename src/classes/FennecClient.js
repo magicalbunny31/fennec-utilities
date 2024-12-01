@@ -71,7 +71,7 @@ module.exports = class FennecClient {
          headers: {
             Authorization: this.#fennecOptions.fennecUtilities.authorisation,
             ...body
-               ? { "Content-Type": `application-json` }
+               ? { "Content-Type": `application/json` }
                : {}
          },
          body
