@@ -234,7 +234,7 @@ module.exports = class FennecClient {
                   throw new Error(`🚫 FennecClient websocket to fennec-websocket's heartbeat timer was ended and connection has been terminated`);
                },
                0.5 * 60 * 1000 // websocket server interval
-                  +   1 * 1000 // latency
+                  +   1 * 3000 // latency
             );
          };
 
