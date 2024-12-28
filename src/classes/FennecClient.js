@@ -86,7 +86,7 @@ module.exports = class FennecClient {
             body
          });
 
-         if (!response.ok) {
+         if (!response.ok && response.status !== HTTPStatusCodes.NotFound) {
             // bad response
             attempts ++;
             errors.push(`HTTP ${response.status} ${response.statusText}: ${JSON.stringify(await response.text())}}`);
