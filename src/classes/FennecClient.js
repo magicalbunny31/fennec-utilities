@@ -69,22 +69,45 @@ module.exports = class FennecClient {
       const basic = `${this.#fennecOptions.fennecUtilities.id}:${this.#fennecOptions.fennecUtilities.authorisation}`;
       const encoded = Buffer.from(basic).toString(`base64`);
 
-      // send response
-      const response = await fetch(`${this.#fennecOptions.fennecUtilities.baseUrl}${route}`, {
-         method,
-         headers: {
-            Authorization: `Basic ${encoded}`,
-            ...body
-               ? { "Content-Type": `application/json` }
-               : {}
-         },
-         body
-      });
+      // attempts
+      let attempts = 0;
+      const errors = [];
 
-      // return response data
-      return response.status === HTTPStatusCodes.NoContent
-         ? {}
-         : await response.json();
+      while (attempts < 3) {
+         // attempt to send a response
+         const response = await fetch(`${this.#fennecOptions.fennecUtilities.baseUrl}${route}`, {
+            method,
+            headers: {
+               Authorization: `Basic ${encoded}`,
+               ...body
+                  ? { "Content-Type": `application/json` }
+                  : {}
+            },
+            body
+         });
+
+         if (!response.ok) {
+            // bad response
+            attempts ++;
+            errors.push(`HTTP ${response.status} ${response.statusText}: ${JSON.stringify(await response.text())}}`);
+            await wait(1000);
+
+         } else {
+            // return response data
+            return response.status === HTTPStatusCodes.NoContent
+               ? {}
+               : await response.json();
+         };
+      };
+
+      // too many attempts
+      throw new Error(
+         [
+            `🚫 FennecClient tried to #sendRequest to ${route} but failed ${attempts + 1} times, reasons:`,
+            ...errors
+         ]
+            .join(`\n`)
+      );
    };
 
 
