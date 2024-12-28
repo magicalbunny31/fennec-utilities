@@ -2,13 +2,13 @@
    "name": "@magicalbunny31/fennec-utilities",
    "version": "3.6.0",
    "description": "💻 utility package for interacting with fennec",
-   "main": "dist/cjs/index.js",
-   "module": "dist/esm/index.js",
+   "main": "./dist/cjs/index.js",
+   "module": "./dist/esm/index.js",
    "scripts": {
       "test": "node ./tests/index.js",
       "test-fennec": "node ./tests/fennec.js"
    },
-   "types": "types/index.d.ts",
+   "types": "./types/index.d.ts",
    "files": [
       "assets",
       "dist",
