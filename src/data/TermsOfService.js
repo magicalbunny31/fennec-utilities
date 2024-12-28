@@ -1,1 +1,1 @@
-module.exports = `https://nuzzles.dev/terms`;
+module.exports = `https://nuzzles.dev/dev/terms`;
