@@ -64,6 +64,9 @@ module.exports = async (message, developers, emojis) => {
       /* evaluate */
       case `ephemeral-evaluate`:
       case `evaluate`: {
+         // variables to expose
+         const Discord = require("discord.js");
+
          // ephemeral?
          const isEphemeral = commandName === `ephemeral-evaluate`;
 
