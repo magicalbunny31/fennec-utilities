@@ -152,7 +152,7 @@ module.exports = async (message, developers, emojis) => {
                            codeBlock(`js`, code).length > 1024
                               ? [
                                  code.slice(0, 1024 - 28),
-                                 `// ...`
+                                 `// no input..?`
                               ]
                                  .join(`\n`)
                               : code
@@ -164,7 +164,7 @@ module.exports = async (message, developers, emojis) => {
                            codeBlock(`js`, `${output}`).length > 1024
                               ? [
                                  `${output}`.slice(0, 1024 - 28),
-                                 `// ...`
+                                 `// no output..?`
                               ]
                                  .join(`\n`)
                               : `${output}`
