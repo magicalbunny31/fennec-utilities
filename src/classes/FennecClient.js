@@ -1,7 +1,6 @@
 const { EventEmitter } = require("node:events");
 const { wait } = require("@magicalbunny31/pawesome-utility-stuffs");
 const { setIntervalAsync } = require("set-interval-async");
-const WebSocket = require("ws");
 
 
 const Methods = {
@@ -40,7 +39,6 @@ module.exports = class FennecClient {
    #fennecOptions;
    #initialised = false;
    #notInitialisedError = new Error(`🚫 FennecClient.initialise() not run yet`);
-   #noFennecWebsocketArgs = new Error(`🚫 FennecClient fennecWebsocket arguments are required to use this method`);
    #blacklistCache;
    #notUsingBlacklistCacheError = method => new Error(`🚫 FennecClient.${method}() cannot be used as blacklist cache is set to not update`);
    #applicationStatusApplicationStatisticsStatusCache;
@@ -48,10 +46,6 @@ module.exports = class FennecClient {
    #announcementCache;
    #announcementUsersCache;
    #notUsingAnnouncementCache = method => new Error(`🚫 FennecClient.${method}() cannot be used as announcement cache is set to not update`);
-   #websocket;
-   #websocketHeartbeat;
-
-   fennecWebsocket = new EventEmitter();
 
 
    constructor(options) {
@@ -217,57 +211,6 @@ module.exports = class FennecClient {
    };
 
 
-   #initialiseWebsocket() {
-      const initialiseWebhook = () => {
-         this.#websocket = new WebSocket(`${this.#fennecOptions.fennecWebsocket.baseUrl}?token=${encodeURIComponent(this.#fennecOptions.fennecWebsocket.authorisation)}`, { rejectUnauthorized: false });
-
-         const setHeartbeat = async () => {
-            if (this.#websocket.readyState === this.#websocket.CONNECTING) {
-               await wait(250);
-               return await setHeartbeat();
-            };
-
-            clearTimeout(this.#websocketHeartbeat);
-            this.#websocketHeartbeat = setTimeout(
-               () => {
-                  this.#websocket.terminate();
-                  throw new Error(`🚫 FennecClient websocket to fennec-websocket's heartbeat timer was ended and connection has been terminated`);
-               },
-               0.5 * 60 * 1000 // websocket server interval
-                  +   1 * 3000 // latency
-            );
-         };
-
-         this.#websocket.on(`open`, async () =>
-            await setHeartbeat()
-         );
-
-         this.#websocket.on(`ping`, async () =>
-            await setHeartbeat()
-         );
-
-         this.#websocket.on(`error`, error => {
-            console.error(`🚫 error at FennecClient.#websocket`);
-            throw error;
-         });
-
-         this.#websocket.on(`message`, rawData => {
-            const data = JSON.parse(rawData);
-            this.fennecWebsocket.emit(`data`, data);
-         });
-
-         this.#websocket.on(`close`, () => {
-            clearTimeout(this.#websocketHeartbeat);
-            this.#websocket = initialiseWebhook(); // reconnect to the websocket by reinitialising the variables
-         });
-
-         return this.#websocket;
-      };
-
-      this.#websocket = initialiseWebhook();
-   };
-
-
    async initialise() {
       // client already initialised
       if (this.#initialised)
@@ -289,51 +232,8 @@ module.exports = class FennecClient {
       const fifteenMinutes = 15 * 60 * 1000;
       setIntervalAsync(intervalFunction, fifteenMinutes);
 
-      // set up the websocket client to fennec-websocket
-      if (this.#fennecOptions.fennecWebsocket)
-         this.#initialiseWebsocket();
-
       // client initialised
       this.#initialised = true;
-   };
-
-
-   isConnected(id) {
-      // client isn't initialised
-      if (!this.#initialised)
-         return console.error(this.#notInitialisedError);
-
-      // #fennecWebsocket options were not specified
-      if (!this.#fennecOptions.fennecWebsocket)
-         throw this.#noFennecWebsocketArgs;
-
-      // check if a client is connected
-      return new Promise((resolve, reject) => {
-         this.#websocket.once(`message`, raw => {
-            const data = JSON.parse(raw);
-            resolve(data?.connected);
-         });
-
-         this.#websocket.once(`error`, error => reject(error));
-
-         const dataToSend = JSON.stringify({ id });
-         this.#websocket.send(dataToSend);
-      });
-   };
-
-
-   sendData(toId, data) {
-      // client isn't initialised
-      if (!this.#initialised)
-         return console.error(this.#notInitialisedError);
-
-      // #fennecWebsocket options were not specified
-      if (!this.#fennecOptions.fennecWebsocket)
-         throw this.#noFennecWebsocketArgs;
-
-      // send data
-      const dataToSend = JSON.stringify({ toId, data });
-      this.#websocket.send(dataToSend);
    };
 
 

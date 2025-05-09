@@ -5,7 +5,6 @@ import { BlacklistCache, BlacklistEntry } from "./Blacklist";
 import { EventEmitter } from "node:events";
 import { emojis } from "@magicalbunny31/pawesome-utility-stuffs";
 import { Interaction, Message } from "discord.js";
-import WebSocket from "ws";
 
 
 type FennecUtilities = {
@@ -26,9 +25,6 @@ type FennecUtilities = {
 };
 
 
-type FennecWebsocket = Omit<FennecUtilities, "id">;
-
-
 type FennecOptions = {
    /**
     * 💻 which `fennecProcess` manages this app
@@ -43,13 +39,6 @@ type FennecOptions = {
     * ☁️ options for `fennec-utilities`
     */
    fennecUtilities: FennecUtilities;
-
-   /**
-    * ☁️ options for `fennec-websocket`, fennec 💻's way to interact with other fennec processes
-    *
-    * ❗ this option is **ONLY** required for fennec 💻 apps - do not specify this option if this app is **NOT** fennec 💻
-    */
-   fennecWebsocket?: FennecWebsocket;
 
    /**
     * 🆔 the shard id this process is managing
@@ -94,9 +83,6 @@ export class FennecClient {
    private notInitialisedError: Error;
 
 
-   private noFennecWebsocketArgs: Error;
-
-
    private blacklistCache: BlacklistCache?;
 
 
@@ -116,15 +102,6 @@ export class FennecClient {
 
 
    private notUsingAnnouncementCache(method: string): Error;
-
-
-   private websocket: typeof WebSocket;
-   
-
-   private websocketHeartbeat: ReturnType<typeof setInterval>;
-
-
-   fennecWebsocket: typeof EventEmitter;
 
 
    /**
@@ -152,34 +129,12 @@ export class FennecClient {
    private async updateOnlineStatus(): Promise<void>;
 
 
-   private initialiseWebsocket(): void;
-
-
    /**
     * 🏳️ initialise the `FennecClient`: this must be run once before running other methods
     * 
     * 💤 when the `FennecClient` isn't initialised, it is the same as disabling the `FennecClient`'s functionality: every method that is run will instead not do anything and will output `console.error(...)`
     */
    async initialise(): Promise<void>;
-
-
-   /**
-    * 🏓 check if another `FennecClient` is listening to `fennec-websocket`
-    *
-    * 📣 if `undefined` was returned, it may have interfered with a request between other `FennecClient`s and should not be trusted
-    * @param id 🏷️ target `FennecClient` id (type) to check if is listening to `fennec-websocket`
-    */
-   isConnected(id: string): Promise<boolean?>;
-
-
-   /**
-    * 📤 send data to another `FennecClient` listening to `fennec-websocket`
-    *
-    * 🏓 before running this method, the target `FennecClient` should be checked if it is listening to `fennec-websocket` with `FennecClient.isConnected()`
-    * @param toId 🏷️ target `FennecClient` id (type) to send data to
-    * @param data 📦 data to send to this `FennecClient`
-    */
-   sendData(toId: string, data: any): void;
 
 
    /**
