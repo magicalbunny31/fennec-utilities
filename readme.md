@@ -15,7 +15,7 @@ that's it ✨
 
 📦 **dependencies require [Node.js](https://nodejs.org "https://nodejs.org 🔗") >=18 installed!**
 
-💻 you can then install this repository via [npm](https://www.npmjs.com "https://www.npmjs.com 🔗"), [pnpm](https://pnpm.io "https://pnpm.io 🔗") or [yarn](https://yarnpkg.com "https://yarnpkg.com 🔗")~
+💻 you can then install this repository via [npm](https://www.npmjs.com), [pnpm](https://pnpm.io) or [yarn](https://yarnpkg.com)~
 
 ```sh-session
 npm install github:magicalbunny31/fennec-utilities

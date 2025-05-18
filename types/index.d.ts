@@ -323,7 +323,7 @@ export const TermsOfService: typeof import("../src/data/TermsOfService.js");
  * @param message 💬 the [discord.js](https://discord.js.org)' [`Message`](https://discord.js.org/docs/packages/discord.js/main/Message:Class) object
  * @param fennec 💻 this app's `FennecClient`
  * @param developers 🤖 user ids which can invoke these commands
- * @param allEmojis 🦊 guild and application emojis, from [`@magicalbunny31/pawesome-utility-stuffs`](https://github.com/magicalbunny31/pawesome-utility-stuffs)
+ * @param allEmojis 🦊 guild and application emojis, from [`@magicalbunny31/pawesome-utility-stuffs`](https://nuzzles.dev/dev/pawesome-utility-stuffs)
  */
 export async function developerCommands(message: Message, fennec: FennecClient, developers: string[], allEmojis: ReturnType<typeof emojis>): Promise<void>;
 
@@ -349,6 +349,6 @@ export function formatEvalExec(input: string, output: string, isEvaluate: boolea
  * @param interaction 💬 the [discord.js](https://discord.js.org)' `Interaction` object
  * @param fennec 💻 this app's `FennecClient`
  * @param notificationType 🏷️ the `NotificationType` to show
- * @param emojis 🦊 guild and application emojis, from [`@magicalbunny31/pawesome-utility-stuffs`](https://github.com/magicalbunny31/pawesome-utility-stuffs)
+ * @param emojis 🦊 guild and application emojis, from [`@magicalbunny31/pawesome-utility-stuffs`](https://nuzzles.dev/dev/pawesome-utility-stuffs)
  */
 export async function notify(interaction: Interaction, fennec: FennecClient, notificationType: typeof NotificationType, emojis: ReturnType<typeof emojis>): Promise<void>;
