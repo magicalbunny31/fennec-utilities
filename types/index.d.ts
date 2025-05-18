@@ -4,7 +4,7 @@ import { BlacklistCache, BlacklistEntry } from "./Blacklist";
 
 import { EventEmitter } from "node:events";
 import { emojis } from "@magicalbunny31/pawesome-utility-stuffs";
-import { Interaction, Message } from "discord.js";
+import { AttachmentBuilder, ComponentBuilder, Interaction, Message } from "discord.js";
 
 
 type FennecUtilities = {
@@ -321,10 +321,11 @@ export const TermsOfService: typeof import("../src/data/TermsOfService.js");
 /**
  * 💻 developer commands by `fennec-utilities`
  * @param message 💬 the [discord.js](https://discord.js.org)' [`Message`](https://discord.js.org/docs/packages/discord.js/main/Message:Class) object
+ * @param fennec 💻 this app's `FennecClient`
  * @param developers 🤖 user ids which can invoke these commands
  * @param allEmojis 🦊 guild and application emojis, from [`@magicalbunny31/pawesome-utility-stuffs`](https://github.com/magicalbunny31/pawesome-utility-stuffs)
  */
-export async function developerCommands(message: Message, developers: string[], allEmojis: ReturnType<typeof emojis>): Promise<void>;
+export async function developerCommands(message: Message, fennec: FennecClient, developers: string[], allEmojis: ReturnType<typeof emojis>): Promise<void>;
 
 
 /**

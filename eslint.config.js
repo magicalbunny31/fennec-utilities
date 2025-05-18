@@ -35,7 +35,6 @@ module.exports = [{
       "no-empty-character-class": `error`,
       "no-empty-pattern": `error`,
       "no-ex-assign": `warn`,
-      "no-fallthrough": `warn`,
       "no-func-assign": `error`,
       "no-import-assign": `error`,
       "no-inner-declarations": `error`,
