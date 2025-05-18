@@ -4,6 +4,7 @@ const NotificationType = require("../../src/data/NotificationType.js");
 const PrivacyPolicy = require("../../src/data/PrivacyPolicy.js");
 const TermsOfService = require("../../src/data/TermsOfService.js");
 const developerCommands = require("../../src/functions/developerCommands.js");
+const formatEvalExec = require("../../src/functions/formatEvalExec.js");
 const notify = require("../../src/functions/notify.js");
 
 
@@ -14,5 +15,6 @@ module.exports = {
    PrivacyPolicy,
    TermsOfService,
    developerCommands,
+   formatEvalExec,
    notify
 };

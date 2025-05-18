@@ -328,6 +328,20 @@ export async function developerCommands(message: Message, developers: string[], 
 
 
 /**
+ * 📒 format an evaluate or execute command
+ *
+ * 🐺 you'll need to generate your own `input` and `output` strings: this function doesn't perform these dangerous methods for you and only exists to format the command
+ *
+ * ❓ this method exists because similar formatting is used for apps via [`@magicalbunny31/fennec-utilities`](https://nuzzles.dev/dev/fennec/utilities) and [fennec 💻](https://nuzzles.dev/dev/fennec)
+ * @param input 📥 the string that was used to generate this `output`
+ * @param output 📤 the string that was generated as a result of this `input`
+ * @param isEvaluate 🏷️ if this function will format an evaluate command or not (if not, it will format an execute command)
+ * @param emojis 🦊 guild and application emojis, from [`@magicalbunny31/pawesome-utility-stuffs`](https://nuzzles.dev/dev/pawesome-utility-stuffs)
+ */
+export function formatEvalExec(input: string, output: string, isEvaluate: boolean, emojis: ReturnType<typeof emojis>): { components: ComponentBuilder[], files: AttachmentBuilder[] };
+
+
+/**
  * 💬 notify the person about a specific `notificationType`
  * 
  * 📣 when the `notificationType` is `NotificationType.Announcement`: this will check if the person has seen this announcement and, if not, show them the announcement and set them as having seen the announcement
