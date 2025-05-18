@@ -1,4 +1,4 @@
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, hyperlink, quote, time, unorderedList } = require("discord.js");
+const { ActionRowBuilder, bold, ButtonBuilder, ButtonStyle, ContainerBuilder, heading, HeadingLevel, hyperlink, MessageFlags, quote, SectionBuilder, SeparatorBuilder, SeparatorSpacingSize, TextDisplayBuilder, time, unorderedList } = require("discord.js");
 const { colours } = require("@magicalbunny31/pawesome-utility-stuffs");
 
 
@@ -12,7 +12,9 @@ module.exports = async (interaction, fennec, notificationType, emojis) => {
 
    if (blockInteraction)
       await interaction.deferReply({
-         ephemeral: true
+         flags: [
+            MessageFlags.Ephemeral
+         ]
       });
 
 
@@ -31,7 +33,7 @@ module.exports = async (interaction, fennec, notificationType, emojis) => {
       || colours.fennec;
 
 
-   // get this application's support guild (it *should* have a support guild set if it is notifying people..)
+   // get this application's support guild (it *must* have a support guild set if it is notifying people..)
    const guild = await fennec.getGuildInvite();
 
 
@@ -41,121 +43,186 @@ module.exports = async (interaction, fennec, notificationType, emojis) => {
          case NotificationType.Announcement:
             const announcement = fennec.getAnnouncement();
             return {
-               embeds: [
-                  new EmbedBuilder()
-                     .setColor(colours.bunny_pink)
-                     .setTitle(`${emojis.awoo} announcement`)
-                     .setDescription(announcement.message)
-                     .setTimestamp(announcement.at)
-               ],
                components: [
-                  new ActionRowBuilder()
-                     .setComponents(
-                        new ButtonBuilder()
-                           .setLabel(`support server`)
-                           .setEmoji(emojis.discord)
-                           .setStyle(ButtonStyle.Link)
-                           .setURL(guild)
+                  new ContainerBuilder()
+                     .setAccentColor(colours.bunny_pink)
+                     .addTextDisplayComponents(
+                        new TextDisplayBuilder()
+                           .setContent(
+                              heading(`${emojis.awoo} announcement`, HeadingLevel.Two)
+                           )
+                     )
+                     .addTextDisplayComponents(
+                        new TextDisplayBuilder()
+                           .setContent(announcement.message)
+                     )
+                     .addSeparatorComponents(
+                        new SeparatorBuilder()
+                           .setDivider(true)
+                           .setSpacing(SeparatorSpacingSize.Small)
+                     )
+                     .addSectionComponents(
+                        new SectionBuilder()
+                           .addTextDisplayComponents(
+                              new TextDisplayBuilder()
+                                 .setContent(`${emojis.watch} ${time(announcement.at)}`)
+                           )
+                           .setButtonAccessory(
+                              new ButtonBuilder()
+                                 .setLabel(`support server`)
+                                 .setEmoji(emojis.discord)
+                                 .setStyle(ButtonStyle.Link)
+                                 .setURL(guild)
+                           )
                      )
                ],
-               ephemeral: true
+               flags: [
+                  MessageFlags.Ephemeral,
+                  MessageFlags.IsComponentsV2
+               ]
             };
 
          case NotificationType.Blacklist:
             const blacklistInfo = await fennec.getUserBlacklistInfo(interaction.user.id);
             const payload = {
-               embeds: [
-                  new EmbedBuilder()
-                     .setColor(colours.red)
-                     .setTitle(`${emojis.haha_uhh} well, this is awkward..`)
-                     .setDescription(
-                        unorderedList([
-                           `you've been blacklisted from using ${interaction.client.user}..`,
-                           [
-                              `being on the blacklist means you will be unable to use all services mentioned in the ${emojis.yellow_book} ${hyperlink(`terms of service`, TermsOfService)}`
-                           ],
-                           `if you think this decision was in error, join the ${hyperlink(`support server`, guild)} to dispute it`,
-                           `information about your blacklist can be found below`
-                        ])
+               components: [
+                  new ContainerBuilder()
+                     .setAccentColor(colours.red)
+                     .addTextDisplayComponents(
+                        new TextDisplayBuilder()
+                           .setContent(
+                              [
+                                 heading(`${emojis.haha_uhh} well, this is awkward..`, HeadingLevel.Three),
+                                 unorderedList([
+                                    `you've been blacklisted from using ${interaction.client.user}..`,
+                                    [
+                                       `being on the blacklist means you will be unable to use all services mentioned in the ${emojis.yellow_book} ${hyperlink(`terms of service`, TermsOfService)}`
+                                    ],
+                                    `if you think this decision was in error, join the ${emojis.discord} ${hyperlink(`support server`, guild)} to dispute it`,
+                                    `information about your blacklist can be found below~`
+                                 ])
+                              ]
+                                 .join(`\n`)
+                           )
+                     )
+                     .addActionRowComponents(
+                        new ActionRowBuilder()
+                           .setComponents(
+                              new ButtonBuilder()
+                                 .setLabel(`terms of service`)
+                                 .setEmoji(emojis.yellow_book)
+                                 .setStyle(ButtonStyle.Link)
+                                 .setURL(TermsOfService),
+                              new ButtonBuilder()
+                                 .setLabel(`support server`)
+                                 .setEmoji(emojis.discord)
+                                 .setStyle(ButtonStyle.Link)
+                                 .setURL(guild)
+                           )
                      ),
-                  new EmbedBuilder()
-                     .setColor(accentColour)
-                     .setFields(
-                        [{
-                           name: `${emojis.calendar_spiral} you were added to the blacklist at`,
-                           value: blacklistInfo?.at ? time(blacklistInfo.at) : ``,
-                           inline: true
-                        }, {
-                           name: `${emojis.watch} you will be removed from the blacklist at`,
-                           value: blacklistInfo?.delete ? time(blacklistInfo.delete) : ``,
-                           inline: true
-                        }, {
-                           name: `${emojis.curled_page} why you are on the blacklist`,
-                           value: blacklistInfo?.reason ? quote(blacklistInfo.reason) : ``,
-                           inline: false
-                        }]
-                           .filter(field => field.value)
+                  new ContainerBuilder()
+                     .setAccentColor(accentColour)
+                     .addTextDisplayComponents(
+                        new TextDisplayBuilder()
+                           .setContent(
+                              unorderedList([
+                                 `${bold(`${emojis.calendar_spiral} you were added to the blacklist at`)}: ${time(blacklistInfo?.at)}`,
+                                 blacklistInfo?.delete
+                                    ? `${bold(`${emojis.watch} you will be removed from the blacklist at`)}: ${time(blacklistInfo.delete)}`
+                                    : bold(`${emojis.watch} you will not be removed from the blacklist`)
+                              ])
+                           )
+                     )
+                     .addSeparatorComponents(
+                        new SeparatorBuilder()
+                           .setDivider(true)
+                           .setSpacing(SeparatorSpacingSize.Small)
+                     )
+                     .addTextDisplayComponents(
+                        new TextDisplayBuilder()
+                           .setContent(
+                              [
+                                 heading(`${emojis.curled_page} why you are on the blacklist`, HeadingLevel.Three),
+                                 quote(blacklistInfo?.reason)
+                              ]
+                                 .join(`\n`)
+                           )
                      )
                ],
-               components: [
-                  new ActionRowBuilder()
-                     .setComponents(
-                        new ButtonBuilder()
-                           .setLabel(`support server`)
-                           .setEmoji(emojis.discord)
-                           .setStyle(ButtonStyle.Link)
-                           .setURL(guild),
-                        new ButtonBuilder()
-                           .setLabel(`terms of service`)
-                           .setEmoji(emojis.yellow_book)
-                           .setStyle(ButtonStyle.Link)
-                           .setURL(TermsOfService)
-                     )
+               allowedMentions: {
+                  parse: []
+               },
+               flags: [
+                  MessageFlags.IsComponentsV2
                ]
             };
             if (!blacklistInfo)
-               payload.embeds[1].setDescription(
-                  unorderedList([
-                     `your blacklist has expired and you are confirmed to not be on it anymore! ${emojis.yaya}`,
-                     `however, the blacklist is updated every 15 minutes: you must wait a little while until you are able to use ${interaction.client.user} again`,
-                     [
-                        `see you later, ${interaction.user}~`
-                     ]
-                  ])
-               );
+               payload.components[1]
+                  .spliceComponents(0, 3,
+                     new TextDisplayBuilder()
+                        .setContent(
+                           unorderedList([
+                              `your blacklist has expired and you are confirmed to not be on it anymore! ${emojis.yaya}`,
+                              `however, the blacklist is updated internally every 15 minutes: you must wait a little while until you are able to use ${interaction.client.user} again`,
+                              [
+                                 `see you later, ${interaction.user}~`
+                              ]
+                           ])
+                        )
+                  );
             return payload;
 
          case NotificationType.Offline:
             const status = await fennec.getApplicationStatusApplicationStatisticsStatus();
             return {
-               embeds: [
-                  new EmbedBuilder()
-                     .setColor(colours.grey)
-                     .setTitle(`${emojis.stop} technical difficulties..`)
-                     .setDescription(
-                        unorderedList([
-                           `${interaction.client.user} has been marked offline by the developers`,
-                           [
-                              `this means that you will be unable to use this app's commands until the developers mark it as online again`
-                           ],
-                           `for any queries, join the ${hyperlink(`support server`, guild)}`,
-                           `information about this can be found below`
-                        ])
-                     ),
-                  new EmbedBuilder()
-                     .setColor(colours.light_grey)
-                     .setDescription(status.message)
-                     .setTimestamp(status.at)
-               ],
                components: [
-                  new ActionRowBuilder()
-                     .setComponents(
-                        new ButtonBuilder()
-                           .setLabel(`support server`)
-                           .setEmoji(emojis.discord)
-                           .setStyle(ButtonStyle.Link)
-                           .setURL(guild)
+                  new ContainerBuilder()
+                     .setAccentColor(colours.grey)
+                     .addTextDisplayComponents(
+                        new TextDisplayBuilder()
+                           .setContent(
+                              [
+                                 heading(`${emojis.stop} technical difficulties..`, HeadingLevel.Three),
+                                 unorderedList([
+                                    `${interaction.client.user} has been marked offline by the developers`,
+                                    [
+                                       `this means that you will be unable to use this app's commands until the developers mark it as online again`
+                                    ],
+                                    `for any queries, join the ${emojis.discord} ${hyperlink(`support server`, guild)}`,
+                                    `information about this can be found below~`
+                                 ])
+                              ]
+                                 .join(`\n`)
+                           )
+                     ),
+                  new ContainerBuilder()
+                     .setAccentColor(colours.light_grey)
+                     .addTextDisplayComponents(
+                        new TextDisplayBuilder()
+                           .setContent(status.message)
                      )
+                     .addSeparatorComponents(
+                        new SeparatorBuilder()
+                           .setDivider(true)
+                           .setSpacing(SeparatorSpacingSize.Small)
+                     )
+                     .addSectionComponents(
+                        new SectionBuilder()
+                           .addTextDisplayComponents(
+                              new TextDisplayBuilder()
+                                 .setContent(`${emojis.watch} ${time(status.at)}`)
+                           )
+                           .setButtonAccessory(
+                              new ButtonBuilder()
+                                 .setLabel(`support server`)
+                                 .setEmoji(emojis.discord)
+                                 .setStyle(ButtonStyle.Link)
+                                 .setURL(guild)
+                           )
+                     )
+               ],
+               flags: [
+                  MessageFlags.IsComponentsV2
                ]
             };
       };
