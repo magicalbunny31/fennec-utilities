@@ -206,7 +206,7 @@ module.exports = async (message, fennec, developers, emojis) => {
          };
 
          // the evaluation string contains blacklisted words
-         if ([ `token`, `env` ].some(word => code.includes(word))) {
+         if ([ `token`, `env` ].some(word => code.toLowerCase().includes(word))) {
             addComponents(
                new TextDisplayBuilder()
                   .setContent(
