@@ -199,6 +199,15 @@ export class FennecClient {
 
 
    /**
+    * 📁 get this app's application status thread id
+    *
+    * ❓ this will return `undefined` if this app doesn't have an application status thread id set
+    * @returns 🆔 application status thread id
+    */
+   async getApplicationStatusThreadId(): Promise<string?>;
+
+
+   /**
     * 📰 post a log embed to the app's application-status thread
     * @param content 📄 contents of the log: can be a multi-line string and has no character limit
     * @param at 🗓️ date of when this log was generated
