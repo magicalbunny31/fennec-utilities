@@ -24,7 +24,7 @@ const Routes = {
    AnnouncementUser: userId => `/announcement/${userId}`,
    AnnouncementUsers: `/announcement/users`,
    ApplicationStatusApplicationStatisticsStatus: `/application-status/application-statistics/status`,
-   ApplicationStatusThreadId: `/application-status/thread-id`,
+   ApplicationStatusThreadId: app => `/application-status/thread-id/${app}`,
    Blacklist: `/blacklist`,
    BlacklistUser: userId => `/blacklist/${userId}`,
    GuildInvite: `/guild-invite`,
@@ -381,13 +381,13 @@ module.exports = class FennecClient {
    };
 
 
-   async getApplicationStatusThreadId() {
+   async getApplicationStatusThreadId(app) {
       // client isn't initialised
       if (!this.#initialised)
          return console.error(this.#notInitialisedError);
 
       // get application status thread id
-      const applicationStatusThreadIdData = await this.#sendRequest(Methods.Get, Routes.ApplicationStatusThreadId);
+      const applicationStatusThreadIdData = await this.#sendRequest(Methods.Get, Routes.ApplicationStatusThreadId(app));
 
       // return guild invite
       return applicationStatusThreadIdData.data?.[`application-status-thread-id`];
