@@ -49,12 +49,12 @@ module.exports = async (interaction, fennec, notificationType, emojis) => {
                      .addTextDisplayComponents(
                         new TextDisplayBuilder()
                            .setContent(
-                              heading(`${emojis.awoo} announcement`, HeadingLevel.Two)
+                              [
+                                 heading(`${emojis.awoo} announcement`, HeadingLevel.Two),
+                                 announcement.message
+                              ]
+                                 .join(`\n`)
                            )
-                     )
-                     .addTextDisplayComponents(
-                        new TextDisplayBuilder()
-                           .setContent(announcement.message)
                      )
                      .addSeparatorComponents(
                         new SeparatorBuilder()
