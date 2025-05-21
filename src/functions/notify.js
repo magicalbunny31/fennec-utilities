@@ -238,5 +238,6 @@ module.exports = async (interaction, fennec, notificationType, emojis) => {
 
 
    // this was an announcement, so this person has now seen the announcement
-   await fennec.setSeenAnnouncement(interaction.user.id);
+   if (NotificationType.Announcement && !fennec.hasSeenAnnouncement(interaction.user.id))
+      await fennec.setSeenAnnouncement(interaction.user.id);
 };
