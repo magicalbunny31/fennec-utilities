@@ -557,6 +557,11 @@ module.exports = class FennecClient {
       if (response.status === HTTPStatusCodes.NotFound)
          return;
 
+      // update the announcement cache
+      const useAnnouncement = this.#fennecOptions.useAnnouncement ?? true;
+      if (useAnnouncement)
+         this.#announcementUsersCache.users.push(userId);
+
       // set that this user has seen this application's announcement
       await this.#sendRequest(Methods.Post, Routes.AnnouncementUser(userId));
    };
