@@ -310,6 +310,12 @@ export const ApplicationStatisticsStatusName: typeof import("../src/data/Applica
 
 
 /**
+ * 💬 link to the default discord guild invite
+ */
+export const DefaultGuildInvite: typeof import("../src/data/DefaultGuildInvite.js");
+
+
+/**
  * 🏷️ valid fields for `NotificationType`
  */
 export const NotificationType: typeof import("../src/data/NotificationType.js");

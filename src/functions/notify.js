@@ -4,7 +4,7 @@ const { colours } = require("@magicalbunny31/pawesome-utility-stuffs");
 
 module.exports = async (interaction, fennec, notificationType, emojis) => {
    // imports
-   const { NotificationType, TermsOfService } = require("../../");
+   const { DefaultGuildInvite, NotificationType, TermsOfService } = require("../../");
 
 
    // this function was likely called before the interaction, so block it by responding now
@@ -33,8 +33,8 @@ module.exports = async (interaction, fennec, notificationType, emojis) => {
       || colours.fennec;
 
 
-   // get this application's support guild (it *must* have a support guild set if it is notifying people..)
-   const guild = await fennec.getGuildInvite();
+   // get this application's support guild
+   const guild = await fennec.getGuildInvite() ?? DefaultGuildInvite;
 
 
    // get the message payload depending on the notificationType
