@@ -1,5 +1,5 @@
 const { sep } = require("node:path");
-const { AttachmentBuilder, bold, ContainerBuilder, heading, HeadingLevel, MessageFlags, SectionBuilder, SeparatorBuilder, SeparatorSpacingSize, subtext, TextDisplayBuilder, ThumbnailBuilder, hyperlink, underline, unorderedList, inlineCode } = require("discord.js");
+const { AttachmentBuilder, bold, ContainerBuilder, heading, hideLinkEmbed, HeadingLevel, MessageFlags, SectionBuilder, SeparatorBuilder, SeparatorSpacingSize, subtext, TextDisplayBuilder, ThumbnailBuilder, hyperlink, underline, unorderedList, inlineCode } = require("discord.js");
 const { name, version } = require("../../package.json");
 const { colours, choice } = require("@magicalbunny31/pawesome-utility-stuffs");
 
@@ -137,7 +137,7 @@ module.exports = async (message, fennec, developers, emojis) => {
                            ],
                            bold(`${message.client.user} restart`),
                            [
-                              `this kinda just calls ${inlineCode(`process.exit(0)`)} on the process and lets the process manager, like ${hyperlink(`pm2`, `https://pm2.io`)}, restart the process for you`,
+                              `this kinda just calls ${inlineCode(`process.exit(0)`)} on the process and lets the process manager, like ${hyperlink(`PM2`, hideLinkEmbed(`https://pm2.io/`))} or ${hyperlink(`Docker`, hideLinkEmbed(`https://www.docker.com/`))}, restart the process for you`,
                               `note that this will just kill the process if it's not managed by a process manager or if programmed to not restart automatically`
                            ]
                         ])
@@ -264,7 +264,7 @@ module.exports = async (message, fennec, developers, emojis) => {
       };
 
 
-      // this command will only work if managed by a process manager, like pm2
+      // this command will only work if the app is managed by a process manager, like pm2 or docker
       case `restart`: {
          // react to the message
          await message.react(
