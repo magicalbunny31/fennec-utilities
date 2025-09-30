@@ -218,20 +218,26 @@ module.exports = class FennecClient {
          throw new Error(`🚫 FennecClient.initialise() has already been run`);
 
       // methods to run
-      const intervalFunction = async () => {
+      const intervalFunction5 = async () => {
+         await this.#updateOnlineStatus();
+      };
+
+      const intervalFunction15 = async () => {
          await this.#updateBlacklistCache();
          await this.#updateApplicationStatusApplicationStatisticsStatusCache();
          await this.#updateAnnouncementCache();
          await this.#updateAnnouncementUsersCache();
-         await this.#updateOnlineStatus();
       };
 
       // run methods first time
-      await intervalFunction();
+      await intervalFunction5();
+      await intervalFunction15();
 
-      // run methods every 15 minutes
+      // run methods at their interval
+      const fiveMinutes    = 5  * 60 * 1000;
       const fifteenMinutes = 15 * 60 * 1000;
-      setIntervalAsync(intervalFunction, fifteenMinutes);
+      setIntervalAsync(intervalFunction5,  fiveMinutes);
+      setIntervalAsync(intervalFunction15, fifteenMinutes);
 
       // client initialised
       this.#initialised = true;
