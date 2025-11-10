@@ -29,7 +29,8 @@ const Routes = {
    GuildInvite: `/guild-invite`,
    Log: `/log`,
    LogError: `/log/error`,
-   UpdateOnlineStatus: `/update-online-status`
+   UpdateOnlineStatus: `/update-online-status`,
+   UptimePush: `/uptime-push`
 };
 
 
@@ -210,6 +211,22 @@ module.exports = class FennecClient {
       );
    };
 
+   async #uptimePush() {
+      // don't push this uptime
+      const useOnlineStatusUptimePush = this.#fennecOptions.useOnlineStatusUptimePush ?? true;
+      if (!useOnlineStatusUptimePush)
+         return;
+
+      // update this app's online status
+      await this.#sendRequest(Methods.Post,
+         [
+            Routes.UptimePush,
+            `?process=${this.#fennecOptions.process ?? `main`}`
+         ]
+            .join(``)
+      );
+   };
+
 
    async initialise() {
       // client already initialised
@@ -219,6 +236,7 @@ module.exports = class FennecClient {
       // methods to run
       const intervalFunction5 = async () => {
          await this.#updateOnlineStatus();
+         await this.#uptimePush();
       };
 
       const intervalFunction15 = async () => {

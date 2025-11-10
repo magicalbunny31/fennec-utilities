@@ -68,6 +68,12 @@ type FennecOptions = {
     * @default true
     */
    useOnlineStatus?: boolean;
+
+   /**
+    * 🚨 whether to automatically push this app's uptime to mark its status as up
+    * @default true
+    */
+   useOnlineStatusUptimePush?: boolean;
 };
 
 
@@ -127,6 +133,9 @@ export class FennecClient {
 
 
    private async updateOnlineStatus(): Promise<void>;
+
+
+   private async uptimePush(): Promise<void>;
 
 
    /**
