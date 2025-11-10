@@ -1,4 +1,3 @@
-const { EventEmitter } = require("node:events");
 const { wait } = require("@magicalbunny31/pawesome-utility-stuffs");
 const { setIntervalAsync } = require("set-interval-async");
 
