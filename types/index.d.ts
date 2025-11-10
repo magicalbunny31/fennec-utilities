@@ -29,7 +29,7 @@ type FennecOptions = {
    /**
     * 💻 which `fennecProcess` manages this app
     *
-    * 🏷️ when this value is a `string`: the expected value is the name of the `fennecProcess`, such as "`uwu-projects`"
+    * 🏷️ when this value is a `string`: the expected value is the name of the `fennecProcess`, such as "`fox-0`"
     *
     * 🚫 when this value is `false`: this app is assumed to not be running on a server with a `fennecProcess`, such as [cloudflare workers](https://developers.cloudflare.com/workers/)
     */
